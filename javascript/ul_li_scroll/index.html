@@ -54,12 +54,29 @@ function scroll(direction){
 	var curMarginLeft = ml?parseInt(ml):0;
 
 	if (direction=="left"){
-		ulContainer.style.marginLeft = (curMarginLeft+singleUlWidth+mr).toString() + "px";
+		//ulContainer.style.marginLeft = (curMarginLeft+singleUlWidth+mr).toString() + "px";
+		animation(ulContainer, curMarginLeft+singleUlWidth+mr, 'left');
 	}
 	else if (direction=="right"){
-		ulContainer.style.marginLeft = (curMarginLeft-singleUlWidth-mr).toString() + "px";
+		//ulContainer.style.marginLeft = (curMarginLeft-singleUlWidth-mr).toString() + "px";
+		animation(ulContainer, curMarginLeft-singleUlWidth-mr, 'right');
 	}
 	return false;
+}
+
+function animation(obj, value, direction){
+	var ml = obj.style.marginLeft ? parseInt(obj.style.marginLeft) : 0;
+	if (direction=="right")
+	{
+		if(ml<value){obj.style.marginLeft=value+"px";}
+		else { obj.style.marginLeft = (ml-15) + "px"; setTimeout(function(){animation(obj, value, direction)}, 5);}
+	}
+
+	if (direction=="left")
+	{
+		if(ml>value){obj.style.marginLeft=value+"px";}
+		else { obj.style.marginLeft = (ml+15) + "px"; setTimeout(function(){animation(obj, value, direction)}, 5);}
+	}
 }
 </script>
 </body>
