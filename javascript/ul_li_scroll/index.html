@@ -39,7 +39,7 @@
 	(function(obj){
 		var containerUl = document.getElementById("ul");	//滚动元素容器UL
 		var ulScreenWidth = 650;	//滚动区域可视宽度
-		var screenLIAmount = 5;	//每屏几个元素 (可视范围多少个LI元素)
+		var screenLIAmount = 5;		//每屏几个元素 (可视范围多少个LI元素)
 		var liAmount = getLIAmount();
 		var UlAmount = Math.ceil(liAmount / screenLIAmount); //共多少屏	(动态计算有多少屏)
 		var mr = 10;	//li {margin-right:10px;} 此处补缺的10像素
