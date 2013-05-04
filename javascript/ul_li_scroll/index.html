@@ -58,13 +58,13 @@
 			if (direction=="left"){
 				//containerUl.style.marginLeft = (curMarginLeft+ulScreenWidth+mr).toString() + "px";
 				var d = ulScreenWidth; //移动的距离
-				if(CurrentUlIndex==1){d = (liAmount%screenLIAmount)*132-10; } //如果是末屏
+				if(CurrentUlIndex==1){d = (liAmount%screenLIAmount)*132-mr; } //如果是末屏
 				animation(containerUl, curMarginLeft+d+mr, 'left');
 			}
 			else if (direction=="right"){
 				//containerUl.style.marginLeft = (curMarginLeft-ulScreenWidth-mr).toString() + "px";
 				var d = ulScreenWidth; //移动的距离
-				if(CurrentUlIndex==UlAmount){d = (liAmount%screenLIAmount)*132-10; } //如果是末屏
+				if(CurrentUlIndex==UlAmount){d = (liAmount%screenLIAmount)*132-mr; } //如果是末屏
 				animation(containerUl, curMarginLeft-d-mr, 'right');
 			}
 			return false;
