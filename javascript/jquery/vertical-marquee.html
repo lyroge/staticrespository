@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> vertical scrolling </title>
+  <style type="text/css">
+	#verticalScroller {
+		position: relative;
+		width:200px;
+		height:20px;
+		border: 1px solid red;
+		overflow: hidden;
+	}
+
+	#verticalScroller > li{
+		position:absolute;
+		width:80px;
+		height:20px;
+		border: 1px solid blue;
+		overflow:hidden;
+		float:left;
+	}
+  </style>
+  <script type="text/javascript" src="jquery-1.6.3.min.js"></script> 
+  <script type="text/javascript">
+  <!--
+	window.verticalScroller = function($elem) {
+		var top = parseInt($elem.css("top"));
+		if(top < 0){
+			top = $elem.siblings("li").length*20;
+			$elem.css({"top":top});
+		}
+		$elem.animate({ top: (parseInt(top)-20) }, 600, function () {
+			var $this = $(this);
+			setTimeout(function(){window.verticalScroller($this)}, 1000);
+		});
+	}
+
+
+	$(document).ready(function() {
+		var i = 0;
+		$("#verticalScroller > li").each(function () {
+			  $(this).css("top", i);
+			  i += 20;
+			  window.verticalScroller($(this));
+		});
+	});
+  //-->
+  </script>
+ </head>
+
+ <body>
+	
+<ul id="verticalScroller">
+    <li>1 Lorem ipsum dolor sit</li>
+    <li>2 Lorem ipsum dolor sit</li>
+    <li>3 Lorem ipsum dolor sit</li>
+    <li>4 Lorem ipsum dolor sit</li>
+</ul>
+
+
+ </body>
+</html>
