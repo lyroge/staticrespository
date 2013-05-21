@@ -31,3 +31,8 @@ request.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.11
 request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
 request.add_header("Origin", "http://www.douban.com")
 request.add_header("Referer", "http://www.douban.com/group/python/new_topic")
+
+
+### Êä³öcookie
+for c in cookie:
+    print c
