@@ -6,21 +6,22 @@ private void getPageHtml(int pageIndex, int recordcount)
 
 	if (pageIndex == 0)
 		pageIndex = 1;
+	
 	string _url = HttpContext.Current.Request.Url.PathAndQuery.ToString();
-	string _regular = "page=[0-9]";
-	Regex reg = new Regex(_regular);
-	if (reg.IsMatch(_url))
+	Regex regex = new Regex("page=[0-9]+");
+	if (regex.IsMatch(_url))
 	{
-		_url = Regex.Replace(_url, _regular, "", RegexOptions.IgnoreCase);
-	}//if
-	if (_url.IndexOf("?") <= 0)
-		_url += "?page=";
+		string pagestr = regex.Match(_url).Groups[0].Value;
+		_url = _url.Replace(pagestr, "page=");
+	}
 	else
-		_url += "&page=";
-	_url = _url.Replace("&&", "&");
+	{
+		_url +=  (_url.Contains("?") ? "&" : "?") + "page="; }
 
-	int pagecount = (int)Math.Ceiling(recordcount / PageSize * 1.0);//总页数
-	int start = 1, end = 10;
+
+	//分页逻辑代码 计算开始、结束页码
+	int pagecount = (int)Math.Ceiling(recordcount / (PageSize * 1.0));//总页数
+	int start = 1, end = pagecount;
 	bool isendpagenum = false;
 	if (pageIndex > 5)
 	{
@@ -36,11 +37,13 @@ private void getPageHtml(int pageIndex, int recordcount)
 			isendpagenum = true;
 		}
 	}
+
+
 	StringBuilder sb = new StringBuilder();
 
 	//输出首页码
 	if (pageIndex > 5)
-		sb.AppendLine("<a href='" + _url + "1' >首页</a>");
+		sb.AppendLine("<a href='" + _url + "1' >1</a>...");
 
 	for (int i = start; i < end + 1; i++)
 	{
@@ -51,11 +54,11 @@ private void getPageHtml(int pageIndex, int recordcount)
 		}
 		sb.AppendLine("<a href='" + _url + i.ToString() + "' >"+i.ToString()+"</a>");
 	}
-
-	if (!isendpagenum)
-		sb.AppendLine("<a href='" + _url + pagecount.ToString() + "' >末页</a>");
+	if (!isendpagenum && pagecount > 10)
+		sb.AppendLine("...<a href='" + _url + pagecount.ToString() + "' >" + pagecount.ToString() + "</a>");
 
 	sb.AppendLine("<a href='" + _url + (pageIndex + 1).ToString() + "'>下一页</a>");
 	sb.AppendLine("转到<input type='text' value='" + pageIndex.ToString() + "' name='PagerInput' id='PagerInput' style='width:30px;' />页<input type='Button' name='AspNetPager1' id='AspNetPager1_btn' value='Go' onclick=\"javascript:jumpto(document.getElementById('PagerInput').value);\" />");
+
 	this.htmlpage.InnerHtml = sb.ToString();
 }
