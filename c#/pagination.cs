@@ -1,3 +1,7 @@
+/// <summary>
+/// 生成页码
+/// </summary>
+/// <param name="thisPage"></param>
 private void getPageHtml(int pageIndex, int recordcount)
 {
 	//不够一页
@@ -21,7 +25,7 @@ private void getPageHtml(int pageIndex, int recordcount)
 
 	//分页逻辑代码 计算开始、结束页码
 	int pagecount = (int)Math.Ceiling(recordcount / (PageSize * 1.0));//总页数
-	int start = 1, end = pagecount;
+	int start = 1, end = pagecount>10?10 : pagecount;
 	bool isendpagenum = false;
 	if (pageIndex > 5)
 	{
