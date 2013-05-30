@@ -1,0 +1,26 @@
+前言：
+	在处理mysql和GET、POST的数据时，常常要对数据的引号进行转义操作
+
+
+功能：
+	PHP中有三个设置可以实现自动对’（单引号），”（双引号），\（反斜线）和 NULL 字符转转。
+
+
+简介：
+	PHP称之为魔术引号，这三项设置分别是
+
+
+函数：
+	addslashes
+	stripslashes
+
+	1.magic_quotes_gpc
+
+	影响到 HTTP 请求数据（GET，POST 和 COOKIE）。不能在运行时改变。在 PHP 中默认值为 on。
+	这个开启时，通过GET,POST,COOKIE传递的数据会自动被转义。
+	这个开启了，对写入数据库是没有影响的, 写入的数据会自动去掉转义符号
+
+	( 暂不去了解 )
+	2.magic_quotes_runtime
+	3.magic_quotes_sybase 
+	
