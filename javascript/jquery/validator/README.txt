@@ -126,7 +126,8 @@ jQuery校验
 $().ready(function() {
 	$.validator.setDefaults({
 		submitHandler: function(form) { alert("submitted!");form.submit(); } ,
-		debug : true
+		debug : true,
+		success: "valid" // 成功了添加valid样式属性class="valid"
 	})
 
 	 $("#signupForm").validate({
@@ -261,3 +262,5 @@ checkbox的minlength表示必须选中的最小个数,maxlength表示最大的选中个数,rangelengt
 	<option value="p">Peach</option> 
 	<option value="t">Turtle</option> 
 </select> 
+
+
