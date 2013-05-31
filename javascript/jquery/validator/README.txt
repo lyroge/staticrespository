@@ -110,9 +110,44 @@ jQuery校验
  
 2.将校验规则写到js代码中
 
-	$().ready(function() {
+远程地址只能输出 "true" 或 "false"，不能有其它输出 
+1. remote: "check-email.php" 
+2. remote: { 
+	url: "check-email.php", //后台处理程序 
+	type: "post", //数据发送方式 
+	dataType: "json", //接受数据格式 
+	data: { //要传递的数据 
+		username: function() { 
+		return $("#username").val(); 
+		} 
+	} 
+   } 
+
+$().ready(function() {
+	$.validator.setDefaults({
+		submitHandler: function(form) { alert("submitted!");form.submit(); } ,
+		debug : true
+	})
+
 	 $("#signupForm").validate({
-		rules: {
+	   onfocusout：Boolean Default: true ,
+	   onkeyup：Boolean Default: true ,
+	   focusCleanup：Boolean Default: false , // 果是true那么当未通过验证的元素获得焦点时，移除错误提示。避免和 focusInvalid 一起用 
+	   focusInvalid：Boolean Default: true , // 提交表单后，未通过验证的表单(第一个或提交之前获得焦点的未通过验证的表单)会获得焦点 	
+	   errorClass : "error",
+	   errorElement : "label",
+	   errorContainer : "selector", //一个错误的容器
+	   errorLabelContainer : "selector", //把错误统一显示在容器内
+	   wrapper : "String", //用什么标签把errorElement包起来
+	   debug:true,
+	   errorPlacement: function(error, element) { 
+		error.appendTo(element.parent()); 
+	   },
+	   submitHandler:function(form){ 
+		alert("submitted"); 
+		form.submit(); 
+	   },
+	   rules: {
 	   firstname: "required",
 	   email: {
 	    required: true,
@@ -145,7 +180,7 @@ jQuery校验
 	   }
 	  }
 	    });
-	});
+});
 	//messages处，如果某个控件没有message，将调用默认的信息
 
 	<form id="signupForm" method="get" action="">
@@ -173,3 +208,56 @@ jQuery校验
 	required:"#aa:checked"表达式的值为真，则需要验证
 	required:function(){}返回为真，表时需要验证
 	后边两种常用于，表单中需要同时填或不填的元素
+
+五、自定义验证
+addMethod：name, method, message 
+
+自定义验证方法 
+// 中文字两个字节 
+jQuery.validator.addMethod("byteRangeLength", function(value, element, param) { 
+	var length = value.length; 
+	for(var i = 0; i < value.length; i++){ 
+		if(value.charCodeAt(i) > 127){ 
+		length++; 
+		} 
+	} 
+	return this.optional(element) || ( length >= param[0] && length <= param[1] ); 
+}, $.validator.format("请确保输入的值在{0}-{1}个字节之间(一个中文字算2个字节)")); 
+
+
+// 邮政编码验证 
+jQuery.validator.addMethod("isZipCode", function(value, element) { 
+	var tel = /^[0-9]{6}$/; 
+	return this.optional(element) || (tel.test(value)); 
+}, "请正确填写您的邮政编码"); 
+
+
+radio和checkbox、select的验证 
+
+// radio的required表示必须选中一个 
+<input type="radio" id="gender_male" value="m" name="gender" class="{required:true}" /> 
+<input type="radio" id="gender_female" value="f" name="gender"/> 
+
+// checkbox的required表示必须选中 
+<input type="checkbox" class="checkbox" id="agree" name="agree" class="{required:true}" /> 
+checkbox的minlength表示必须选中的最小个数,maxlength表示最大的选中个数,rangelength:[2,3]表示选中个数区间 
+
+<input type="checkbox" class="checkbox" id="spam_email" value="email" name="spam[]" class="{required:true, minlength:2}" /> 
+<input type="checkbox" class="checkbox" id="spam_phone" value="phone" name="spam[]" /> 
+<input type="checkbox" class="checkbox" id="spam_mail" value="mail" name="spam[]" /> 
+
+//select的required表示选中的value不能为空 
+<select id="jungle" name="jungle" title="Please select something!" class="{required:true}"> 
+	<option value=""></option> 
+	<option value="1">Buga</option> 
+	<option value="2">Baga</option> 
+	<option value="3">Oi</option> 
+</select> 
+
+// select的minlength表示选中的最小个数（可多选的select）,maxlength表示最大的选中个数,rangelength:[2,3]表示选中个数区间 
+<select id="fruit" name="fruit" title="Please select at least two fruits" class="{required:true, minlength:2}" multiple="multiple"> 
+	<option value="b">Banana</option> 
+	<option value="a">Apple</option> 
+	<option value="p">Peach</option> 
+	<option value="t">Turtle</option> 
+</select> 

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> jquery validate 验证控件使用实例 </title>
+  <script src="../jquery-1.6.3.min.js" type="text/javascript"></script>
+  <script src="jquery.validate.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+  <!--
+	$(function(){
+		$("form").validate({
+			errorPlacement: function(error, element) { 
+				error.appendTo(element.parent()); 
+			},
+			rules: {
+				username: {
+					required: true,
+					minlength: 2
+				},
+				'habit' : {
+					required: true,
+					minlength : 2
+				}
+			},
+			messages: {
+				username: {
+					required: "Please enter a username",
+					minlength: "Your username must consist of at least 2 characters"
+				}
+			}
+		});
+	});
+  //-->
+  </script>
+ </head>
+
+ <body>
+ <form method="post" action="">
+	<div>用户名： <input type="text" name="username" /></div>
+	<div>性取向： <input type="checkbox" name="habit">男 <input type="checkbox" name="habit">女</div>
+	<input type="submit">
+ </form>
+
+ </body>
+</html>
