@@ -1,4 +1,3 @@
-
 <?php
 
 function get_file_extensions($file_name)  
@@ -37,7 +36,10 @@ function resize_image($filename,$maxwidth,$maxheight, $markname)
 		//cal ratio
 		$widthratio = $maxwidth/$pic_width;
 		$heightratio = $maxheight/$pic_height;
-		$ratio = min($widthratio, $heightratio);
+		if($pic_width >$maxwidth && $pic_height > $maxheight)
+			$ratio = max($widthratio, $heightratio);
+		else
+			$ratio = min($widthratio, $heightratio);
 
 		//newwidth newheight
 		$newwidth = $pic_width * $ratio;
@@ -62,7 +64,6 @@ function resize_image($filename,$maxwidth,$maxheight, $markname)
     {
         $name = str_replace(".".$ext, '_'.$markname.".".$ext, $filename);
         imagejpeg($im,$name);
-		imagedestroy($im);
     }
 }
 
