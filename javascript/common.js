@@ -7,3 +7,5 @@ function trim(str){
 function $(id){
 		return document.getElementById(id);
 }
+
+

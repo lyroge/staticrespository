@@ -1,0 +1,10 @@
+
+Uncomment below lines in 'httpd.conf' (Search for mod_proxy)
+
+LoadModule proxy_module modules/mod_proxy.so 
+LoadModule proxy_http_module modules/mod_proxy_http.so
+
+ProxyPass /img/ http://i00.i.aliimg.com/
+
+e.g.
+http://127.0.0.1:8080/img/photo/v3/128544432/1121_Sella_Riz_Basmati_Rice.jpg_100x100.jpg
