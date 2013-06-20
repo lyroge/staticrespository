@@ -1,0 +1,8 @@
+source命令用法：
+source FileName
+作用:在当前bash环境下读取并执行FileName中的命令。
+注：该命令通常用命令“.”来替代。
+如：source .bash_rc 与 . .bash_rc 是等效的。
+
+注意：source命令与shell scripts的区别是，
+source在当前bash环境下执行命令，而scripts是启动一个子shell来执行命令。这样如果把设置环境变量（或alias等等）的命令写进scripts中，就只会影响子shell,无法改变当前的BASH,所以通过文件（命令列）设置环境变量时，要用source 命令。
