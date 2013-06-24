@@ -1,0 +1,86 @@
+教程：
+http://net.tutsplus.com/tutorials/other/a-deeper-look-at-mod_rewrite-for-apache/
+
+参考手册：
+http://www.cheatography.com/davechild/cheat-sheets/mod-rewrite/
+
+<IfModule mod_rewrite.c>  
+
+  # ...  如果没有模块，不会报错
+  
+</IfModule> 
+
+
+APACHE_VAR
+	%{REQUEST_METHOD}	GET OR POST
+	%{REQUEST_PROTOCOL}	HTTP 1.1
+	%{REQUEST_URI}		/hello.php(global configuration file)  hello.php(.htaccess file)
+	%{QUERY_STRING}		
+	%{THE_REQUEST}		
+	unlike many of the Apache variables we will deal with, during the duration of the request, this variables value will never change! 
+
+
+RewriteRule匹配路径
+	其中的路径从来都没有前面的斜线 不同于变量%{REQUEST_URI}
+	
+
+
+Enabling mod_rewrite
+	confiuration file : httpd.conf
+	load state :  LoadModule rewrite_module modules/mod\_rewrite.so   
+	restart the web server
+
+Testing for mod_rewrite
+	1.phpinfo()
+	  search mod_rewrite
+
+	2.apachectl or httpd
+	  shell> apachectl -t -D DUMP_MODULES
+
+
+Example
+	# Enable Rewriting  %{REQUEST_URI}
+	RewriteEngine on  
+	  
+	# Rewrite user URLs  
+	#   Input:  user/NAME/  
+	#   Output: user.php?id=NAME  
+	RewriteRule ^user/(\w+)/?$ user.php?id=$1  
+
+
+
+	禁止直接访问.php后缀的文件
+	规则1匹配后会修改apache变量，但是the_request仍然是原来的值，不会改变，所以在规则2处匹配失败
+
+	#rule1
+	RewriteRule ^profile(\w+)/?$ profile.php?id=$1	
+
+	#rule2
+	RewriteCond %{THE_REQUEST} profile\.php
+	RewriteRule ^profile\.php - [F]		# '-' 意味着不做任何改变 ： 没有跳转、没有重写
+
+	
+	removing www
+	RewriteEngine on   
+	RewriteCond %{HTTP_HOST} ^www\.example\.com$ [NC]   
+	RewriteRule ^(.*)$ http://example.com/$1 [R=301,L]   
+
+	防止外部链接 
+	1，展示403
+	RewriteEngine on  
+	RewriteCond %{HTTP_REFERER} !^http://example\.net/?.*$ [NC]  
+	RewriteCond %{HTTP_REFERER} !^http://example\.com/?.*$ [NC]  
+	RewriteRule \.(gif|jpe?g|png|bmp)$ – [F,NC]  
+
+	2，展示一个图片
+	RewriteEngine on  
+	RewriteCond %{HTTP_REFERER} !^http://example\.net/?.*$  
+	RewriteCond %{HTTP_REFERER} !^http://example\.com/?.*$   [NC]  
+	RewriteRule \.(gif|jpe?g|png|bmp)$ http://example.com/warning.png [R,NC]  
+
+
+	不是文件或者目录的话转到404页面
+	RewriteEngine on  
+	RewriteCond %{REQUEST_FILENAME} !-f  
+	RewriteCond %{REQUEST_FILENAME} !-d  
+	RewriteRule .* custom_404.html [L]  
