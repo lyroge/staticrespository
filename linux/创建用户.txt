@@ -1,0 +1,37 @@
+useradd testuser   创建用户testuser
+说明：新创建的用户会在/home下创建一个用户目录testuser
+
+passwd testuser   给已创建的用户testuser设置密码
+
+userdel testuser  删除用户testuser
+
+usermod --help   修改用户这个命令的相关参数
+rm -rf testuser   删除用户testuser所在目录
+上面的几个命令只有root账号才可以使用
+
+
+创建新用户后，同时会在etc目录下的passwd文件中添加这个新用户的相关信息
+说明：为了截图，此处我使用了tail -3 passwd命令，只将该文件的最后3行信息
+
+
+su 用户名
+说明：su是switch user的缩写，表示用户切换
+从新的用户状态下输入“exit”即可退回到刚才的用户状态
+
+
+用户组的添加和删除：
+groupadd testgroup    组的添加
+groupdel testgroup    组的删除
+说明：组的增加和删除信息会在etc目录的group文件中体现出来。
+
+
+将某个用户添加到指定组
+usermod -G wheel 用户名
+
+在Linux中wheel组就类似于一个管理员的组。
+通常在LUNIX下，即使我们有系统管理员root的权限，也不推荐用root用户登录。一般情况下用普通用户登录就可以了，在需要root权限执行一些操作时，再su登录成为root用户。但是，任何人只要知道了root的密码，就都可以通过su命令来登录为root用户--这无疑为系统带来了安全隐患。所以，将普通用户加入到wheel组，被加入的这个普通用户就成了管理员组内的用户，但如果不对一些相关的配置文件进行配置，这个管理员组内的用户与普通用户也没什么区别--就像警察下班后，没有带枪、穿这便衣和普通人（用户）一样，虽然他的的确确是警察。
+根据应用的实例不同应用wheel组的方法也不同。这里对于服务器来说，我们希望的是剥夺被加入到wheel组用户以外的普通用户通过su命令来登录为root的机会（只有属于wheel组的用户才可以用su登录为root）。这样就进一步增强了系统的安全性。具体步骤如下:
+1）修改 /etc/pam.d/su 文件，找到“#auth required /lib/security/$ISA/pam_wheel.so use_uid ”这一行，将行首的“#”去掉。
+2）修改 /etc/login.defs 文件，在最后一行增加“SU_WHEEL_ONLY yes”语句。
+然后，用“usermod -G wheel 用户名”将一个用户添加到wheel组中。
+然后，用刚刚被添加到wheel组的用户登录，并执行su命令登录为root用户…这时，输入了正确的root密码可以正常的登录为root用户。但是，如果换成一个不属于wheel组的用户时，执行了su命令后，即使输入了正确的root密码，也无法登录为root用户--普通用户登录为root用户的权限被完全剥夺了~（会收到“密码错误”的提示）。这样无疑提高了系统的安全性~

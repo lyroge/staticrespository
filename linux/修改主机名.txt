@@ -1,0 +1,8 @@
+1.设置主机名
+
+/etc/sysconfig/network
+设置HOSTNAME 重启后生效
+
+2.查看主机名
+hostname命令
+

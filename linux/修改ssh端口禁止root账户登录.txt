@@ -1,0 +1,29 @@
+Linux修改ssh端口22
+vi /etc/ssh/ssh_config
+vi /etc/ssh/sshd_config 
+
+然后修改为port 8888
+以root身份service sshd restart (redhat as3)
+
+使用putty,端口8888 
+Linux下SSH默认的端口是22,为了安全考虑，现修改SSH的端口为1433,修改方法如下 ：
+ 
+/usr/sbin/sshd -p 1433
+ 
+为增强安全
+先增加一个普通权限的用户：
+#useradd uploader
+#passwd uploader
+//设置密码
+ 
+生产机器禁止ROOT远程SSH登录：
+#vi /etc/ssh/sshd_config
+ 
+把
+PermitRootLogin yes
+改为
+PermitRootLogin no
+重启sshd服务
+#service sshd restart
+ 
+远程管理用普通用户uploader登录，然后用 su root 切换到root用户拿到最高权限

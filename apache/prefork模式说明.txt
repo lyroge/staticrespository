@@ -1,0 +1,14 @@
+ServerLimit 256
+StartServers 5
+MinSpareServers 5
+MaxSpareServers 30
+MaxClients 256
+MaxRequestsPerChild 1000
+
+说明：最低5个空闲进程， 最高30个空闲进程 并发数最高256 每个进程处理1000个请求后自动销毁防止内存泄露
+
+fbm分析：
+同一时刻最多10人访问， 10人可能并发请求200个请求（每个页面有很多的imgproxy代理是php代码处理）
+30个进程处理200个请求， 200/30=7 大概需要七批处理 每一批可能是0.5s， 最多3s处理完毕 （忍）
+
+
