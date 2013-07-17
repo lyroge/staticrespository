@@ -167,6 +167,21 @@ namespace HongXiu.Mall.DAL
             return DbHelperSQL.ExecuteSql(BuildInsertSQL(t, excludeField), ls.ToArray()) != -1;
         }
 
+		/// <summary>
+        /// 添加一个对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="excludeField"></param>
+        /// <returns></returns>
+        public int AddByObj_ReturnInsertID<T>(T t, params string[] excludeField) where T : new()
+        {
+            List<SqlParameter> ls = BuildSqlParameterArray(t);
+            object obj = DbHelperSQL.GetSingle(BuildInsertSQL(t, excludeField) +";select @@IDENTITY", ls.ToArray());
+            int id = -1;
+            return Convert.ToInt32(obj);
+        }
+
         /// <summary>
         /// 更新一个对象
         /// </summary>
