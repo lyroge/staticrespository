@@ -1,0 +1,53 @@
+http://blog.csdn.net/cnbird2008/article/details/4409620
+
+正则表达式匹配，其中：
+ ~ 为区分大小写匹配
+ ~* 为不区分大小写匹配
+ !~和!~*分别为区分大小写不匹配及不区分大小写不匹配
+
+
+文件及目录匹配，其中：
+ -f和!-f用来判断是否存在文件
+ -d和!-d用来判断是否存在目录
+ -e和!-e用来判断是否存在文件或目录
+ -x和!-x用来判断文件是否可执行
+
+
+flag标记有：
+ last 相当于Apache里的[L]标记，表示完成rewrite
+ break 终止匹配, 不再匹配后面的规则
+ redirect 返回302临时重定向 地址栏会显示跳转后的地址
+ permanent 返回301永久重定向 地址栏会显示跳转后的地址
+
+
+一些可用的全局变量有，可以用做条件判断(待补全)
+$args
+$content_length
+$content_type
+$document_root
+$document_uri
+$host
+$http_user_agent
+$http_cookie
+$limit_rate
+$request_body_file
+$request_method
+$remote_addr
+$remote_port
+$remote_user
+$request_filename
+$request_uri
+$query_string
+$scheme
+$server_protocol
+$server_addr
+$server_name
+$server_port
+$uri
+
+结合QeePHP的例子
+if (!-d $request_filename) {
+	rewrite ^/([a-z-A-Z]+)/([a-z-A-Z]+)/?(.*)$ /index.php?namespace=user&amp;controller=$1&amp;action=$2&amp;$3 last;
+	rewrite ^/([a-z-A-Z]+)/?$ /index.php?namespace=user&amp;controller=$1 last;
+	break;
+}
