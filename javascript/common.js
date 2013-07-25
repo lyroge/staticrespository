@@ -26,5 +26,19 @@ function extend (destination, source) {
 	return o;   
 }
 
+/* ×Ö·û´®×Ö·û¸öÊý */
+function getStrActualLen(sChars){
+	sChars = $.trim(sChars);
+	var len = 0;
+	for(i=0;i<sChars.length;i++){
+		iCode = sChars.charCodeAt(i);
+		if((iCode>=0 && iCode<=255)||(iCode>=0xff61 && iCode<=0xff9f)){
+			len += 1;
+		}else{
+			len += 2;
+		}
+	}
+	return len;
+}
 
 
