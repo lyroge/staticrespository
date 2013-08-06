@@ -46,7 +46,7 @@ private void getPageHtml(int pageIndex, int recordcount)
 	StringBuilder sb = new StringBuilder();
 
 	//Êä³öÊ×Ò³Âë
-	if (pageIndex > 5)
+	if (pageIndex > 5  && pagecount > 10)
 		sb.AppendLine("<a href='" + _url + "1' >1</a>...");
 
 	for (int i = start; i < end + 1; i++)
