@@ -37,7 +37,10 @@ private void getPageHtml(int pageIndex, int recordcount)
 		else
 		{
 			end = pagecount;
-			start = pagecount - 9;
+			if (pagecount < 10)
+				start = 1;
+			else
+				start = pagecount - 9;
 			isendpagenum = true;
 		}
 	}
