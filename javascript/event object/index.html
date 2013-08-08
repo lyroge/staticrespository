@@ -10,6 +10,25 @@
 		var src = event.srcElement || event.target;
 		alert(src);
 	}
+
+
+	/*
+
+	获取event对象，两种方法：
+	1. onclick="test(event)"
+	2. a.onclick = function(e){}
+
+	*/
+
+	//取消事件冒泡方法：
+	function stopBubble(e){
+	  if(e && e.stopPropagation){
+	  e.stopPropagation();
+	  }else{
+	  window.event.cancelBubble = true;
+	  }
+	};
+
   //-->
   </script>
  </head>
