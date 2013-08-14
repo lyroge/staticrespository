@@ -1,15 +1,85 @@
-语法:	location [ = | ~ | ~* | ^~ ] uri { ... }
-location @name { ... }
-
 为某个请求URI（路径）建立配置。
 
+路径匹配在URI规范化以后进行。所谓规范化，就是先将URI中形如“%XX”的编码字符进行解码， 再解析URI中的相对路径“.”和“..”部分， 另外还可能会压缩相邻的两个或多个斜线成为一个斜线。
 
-路径前缀：
+可以使用前缀字符串或者正则表达式定义路径。使用正则表达式需要在路径开始添加“~*”前缀 (不区分大小写)，或者“~”前缀(区分大小写)。为了根据请求URI查找路径，nginx先检查前缀字符串定义的路径 (前缀路径)，在这些路径中找到能最精确匹配请求URI的路径。然后nginx按在配置文件中的出现顺序检查正则表达式路径， 匹配上某个路径后即停止匹配并使用该路径的配置，否则使用最大前缀匹配的路径的配置。
 
-~*  不区分大小写
+正则表达式中可以包含匹配组(0.7.40)，结果可以被后面的其他指令使用。
 
-~   区分大小写
+如果最大前缀匹配的路径以“^~”开始，那么nginx不再检查正则表达式。
 
-^~  再检查正则表达式
+而且，使用“=”前缀可以定义URI和路径的精确匹配。如果发现匹配，则终止路径查找。 比如，如果请求“/”出现频繁，定义“location = /”可以提高这些请求的处理速度， 因为查找过程在第一次比较以后即结束。这样的路径明显不可能包含嵌套路径。
 
-=   精确匹配
+
+location 
+
+正则匹配
+
+	~*  不区分大小写
+
+	~   区分大小写
+
+字符串前缀匹配
+
+	^~  不再检查正则表达式
+
+	=   精确匹配不检查正则
+
+
+
+
+http://blog.csdn.net/cnbird2008/article/details/4409620
+
+正则表达式匹配，其中：
+
+ ^~ 匹配路径前缀后停止继续搜索
+ ~ 为区分大小写匹配
+ ~* 为不区分大小写匹配
+ !~和!~*分别为区分大小写不匹配及不区分大小写不匹配
+
+
+文件及目录匹配，其中：
+ -f和!-f用来判断是否存在文件
+ -d和!-d用来判断是否存在目录
+ -e和!-e用来判断是否存在文件或目录
+ -x和!-x用来判断文件是否可执行
+
+
+flag标记有：
+ last 相当于Apache里的[L]标记，表示完成rewrite
+ break 终止匹配, 不再匹配后面的规则
+ redirect 返回302临时重定向 地址栏会显示跳转后的地址
+ permanent 返回301永久重定向 地址栏会显示跳转后的地址
+
+
+一些可用的全局变量有，可以用做条件判断(待补全)
+$args
+$content_length
+$content_type
+$document_root
+$document_uri
+$host
+$http_user_agent
+$http_cookie
+$limit_rate
+$request_body_file
+$request_method
+$remote_addr
+$remote_port
+$remote_user
+$request_filename
+$request_uri
+$query_string
+$scheme
+$server_protocol
+$server_addr
+$server_name
+$server_port
+$uri
+
+结合QeePHP的例子
+if (!-d $request_filename) {
+	rewrite ^/([a-z-A-Z]+)/([a-z-A-Z]+)/?(.*)$ /index.php?namespace=user&amp;controller=$1&amp;action=$2&amp;$3 last;
+	rewrite ^/([a-z-A-Z]+)/?$ /index.php?namespace=user&amp;controller=$1 last;
+	break;
+}
