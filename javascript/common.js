@@ -20,3 +20,13 @@ function extend (destination, source) {
 	}
 	return o;
 }
+
+/* 是否未定义 */
+function is_undefined(obj){
+	return typeof(obj) == "undefined";
+}
+
+/* 判断是否为空， 长度为0表示空 */
+function is_empty(obj){
+	return is_undefined(obj) || obj.length == 0;
+}
