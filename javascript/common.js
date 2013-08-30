@@ -30,3 +30,24 @@ function is_undefined(obj){
 function is_empty(obj){
 	return is_undefined(obj) || obj.length == 0;
 }
+
+/* 加入收藏夹 */
+function bookmarkit()
+{
+   if (document.all)
+   {
+      try
+          {window.external.addFavorite('http://mall.hongxiu.com/','美妆-红袖添香商城');}
+      catch (e)
+          {alert("您的浏览器不支持此功能。您可以按 Ctrl+D 试一下。");}
+   }
+   else if (window.sidebar)
+      {
+	try
+          {window.sidebar.addPanel('美妆-红袖添香商城', 'http://mall.hongxiu.com/',  "");}
+      catch (e)
+          {alert("您的浏览器不支持此功能。您可以按 Ctrl+D 试一下。");}
+       }
+    else
+      {alert("您的浏览器不支持此功能。您可以按 Ctrl+D 试一下。");}
+}
