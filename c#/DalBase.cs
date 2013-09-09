@@ -39,11 +39,7 @@ namespace ABC
                     //赋值
                     if (reader[i] != DBNull.Value)
                     {
-                        //一些特殊字段的处理， bool类型读出的数据为0或1， 转换过程会出错
-                        if (fieldType == typeof(System.Boolean))                        
-                            fi.SetValue(t, reader[i].ToString() == "1", null);                        
-                        else
-                            fi.SetValue(t, Convert.ChangeType(reader[i], fieldType), null);
+                        fi.SetValue(t, Convert.ChangeType(reader[i], fieldType), null);
                     }
                 }
                 lsT.Add(t);
