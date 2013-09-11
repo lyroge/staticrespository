@@ -1,0 +1,52 @@
+Linux一个主机配多个IP
+ 
+首先我们在linux下查看该主机的IP地址：
+#ifconfig
+eth0      Link encap:Ethernet HWaddr 00:16:8d:B7:6A:E0 
+          inet addr:192.168.1.111 Bcast:192.168.1.255 Mask:255.255.252.0
+          inet6 addr: fd80::213:8eff:feb7:2ae0/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
+          RX packets:7077 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:54 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:654811 (639.4 KiB) TX bytes:6229 (6.0 KiB)
+          Interrupt:10 Base address:0xb800
+    这里我们只看到该主机只有一个IP地址，我们要在网卡eth0上再绑定另外一个IP，因为一般的机器它只有一张网卡，所以我们就在同一张网卡上进行多个IP的绑定。好了，我们开始做吧。
+1.首先进入网卡的配置文件
+#cd /etc/sysconfig/network-scripts
+2.复制网卡eth0的配置文件
+#cp ifcfg-eth0 ifcfg-eth0:0
+3.修改ifcfg-eht0:0文件
+#vi ifcfg-eth0:0
+将其中的IP地址改为你的另外一个IP地址，比如我的修改如下：
+DEVICE=eth0:0  #网卡的设置名称，要跟文件名一致
+BOOTPROTO=static
+HWADDR=00:16:8d:B7:6A:E0
+IPADDR=192.168.1.112
+NETMASK=255.255.252.0
+GATEWAY=192.168.0.0
+ONBOOT=yes
+TYPE=Ethernet
+ 
+    注意的是，eth0:0的物理网卡地址必须要和eth0d物理网卡地址，即HWaddr要一致，因为是在同一网卡上绑定的多个IP。保存好后，我们就可以 重启网卡了.
+4.重新启动网卡
+/etc/init.d/network restart
+ 
+ 
+5.启动后，再查看IP地址
+#ifconfig
+eth0      Link encap:Ethernet HWaddr 00:16:8d:B7:6A:E0 
+          inet addr:192.168.1.111 Bcast:192.168.1.255 Mask:255.255.252.0
+          inet6 addr: fd80::213:8eff:feb7:2ae0/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
+          RX packets:7077 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:54 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:654811 (639.4 KiB) TX bytes:6229 (6.0 KiB)
+          Interrupt:10 Base address:0xb800
+ 
+eth0:0    Link encap:Ethernet HWaddr 00:16:8d:B7:6A:E0 
+          inet addr:192.168.1.112 Bcast:192.168.1.255 Mask:255.255.252.0
+          UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
+          Interrupt:10 Base address:0xb800
+ 
