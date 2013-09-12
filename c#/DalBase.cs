@@ -1,14 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
-using System.Data;
 
-namespace ABC
+namespace HongXiu.Mall.DAL
 {
-    public class DalBase 
+    public class MallDalBase
     {
+        /// <summary>
+        /// SQL 语句缓存
+        /// </summary>
+        public static Dictionary<string, string> dicSQLCache = new Dictionary<string, string>();
+
+        #region 构造函数 
+
+        public MallDalBase()  { }
+
+        #endregion
+
         #region 帮助方法
 
         /// <summary>
@@ -17,7 +27,7 @@ namespace ABC
         /// <typeparam name="T"></typeparam>
         /// <param name="reader"></param>
         /// <returns></returns>
-        protected List<T> BuildTByDataReader<T>(SqlDataReader reader) where T: new()
+        protected List<T> BuildTByDataReader<T>(SqlDataReader reader) where T : new()
         {
             List<T> lsT = new List<T>();
 
@@ -32,14 +42,10 @@ namespace ABC
                     PropertyInfo fi = t.GetType().GetProperty(reader.GetName(i));
                     if (fi == null)
                         continue;
-
-                    //属性类型
-                    Type fieldType = fi.PropertyType;
-
                     //赋值
                     if (reader[i] != DBNull.Value)
                     {
-                        fi.SetValue(t, Convert.ChangeType(reader[i], fieldType), null);
+                        fi.SetValue(t, Convert.ChangeType(reader[i], fi.PropertyType), null);
                     }
                 }
                 lsT.Add(t);
@@ -82,6 +88,10 @@ namespace ABC
         /// <returns></returns>
         protected string BuildInsertSQL(object obj, params string[] excludeField)
         {
+            string key = string.Format("INSERT_SQL_OBJECT-{0}_EXCLUDEFIELD-{1}", obj.ToString(), string.Join("-", excludeField));
+            if (dicSQLCache.ContainsKey(key))
+                return dicSQLCache[key];
+
             string sql = "insert into [{0}]({1}) values({2})";
             string tablename = obj.GetType().Name;
 
@@ -98,7 +108,9 @@ namespace ABC
                     lsFiled2.Add("@" + fieldname);
                 }
             }
-            return string.Format(sql, tablename, string.Join(",", lsFiled1.ToArray()), string.Join(",", lsFiled2.ToArray()));
+            sql = string.Format(sql, tablename, string.Join(",", lsFiled1.ToArray()), string.Join(",", lsFiled2.ToArray()));
+            dicSQLCache[key] = sql;
+            return sql;
         }
 
         /// <summary>
@@ -106,9 +118,9 @@ namespace ABC
         /// </summary>
         /// <param name="procut"></param>
         /// <returns></returns>
-        protected string BuildUpdateSQL(object obj, int id, params string[] excludeField)
+        protected string BuildUpdateSQL(object obj, params string[] excludeField)
         {
-            return BuildUpdateSQL(obj, "id", id, excludeField);
+            return BuildUpdateSQL("ID", obj, excludeField);
         }
 
         /// <summary>
@@ -116,9 +128,13 @@ namespace ABC
         /// </summary>
         /// <param name="procut"></param>
         /// <returns></returns>
-        protected string BuildUpdateSQL(object obj, string idname,  int id, params string[] excludeField)
+        protected string BuildUpdateSQL(string idname, object obj, params string[] excludeField)
         {
-            string sql = "update [{0}] set {1} where {3}={2}";
+            string key = string.Format("UPDATE_SQL_OBJECT-{0}_IDNAME-{1}_EXCLUDEFIELD-{2}", obj.ToString(), idname, string.Join("-", excludeField));
+            if (dicSQLCache.ContainsKey(key))
+                return dicSQLCache[key];
+
+            string sql = "update [{0}] set {1} where {2}=@{2}";
             string tablename = obj.GetType().Name;
 
             List<string> lsFiled1 = new List<string>();
@@ -127,12 +143,14 @@ namespace ABC
             foreach (PropertyInfo fi in fieldAry)
             {
                 string fieldname = fi.Name;
-                if (Array.IndexOf(excludeField, fieldname) == -1)
+                if (Array.IndexOf(excludeField, fieldname) == -1 && fieldname != idname)
                 {
                     lsFiled1.Add(fieldname + "=@" + fieldname);
                 }
             }
-            return string.Format(sql, tablename, string.Join(",", lsFiled1.ToArray()), id, idname);
+            sql = string.Format(sql, tablename, string.Join(",", lsFiled1.ToArray()), idname);
+            dicSQLCache[key] = sql;
+            return sql;
         }
 
 
@@ -168,7 +186,7 @@ namespace ABC
         public bool DelByID<T>(string idname, int id)
         {
             string tablename = typeof(T).Name;
-            return DbHelperSQL.ExecuteSql(string.Format("delete from [{0}] where {2} = {1}", tablename, id, idname)) != -1;
+            return ExecuteSql(string.Format("delete from [{0}] where {2} = {1}", tablename, id, idname));
         }
 
         #endregion
@@ -178,14 +196,13 @@ namespace ABC
         public bool AddByObj<T>(T t, params string[] excludeField) where T : new()
         {
             List<SqlParameter> ls = BuildSqlParameterArray(t, excludeField);
-            return DbHelperSQL.ExecuteSql(BuildInsertSQL(t, excludeField), ls.ToArray()) != -1;
+            return ExecuteSql(BuildInsertSQL(t, excludeField), ls.ToArray());
         }
 
         public int AddByObj_ReturnInsertID<T>(T t, params string[] excludeField) where T : new()
         {
             List<SqlParameter> ls = BuildSqlParameterArray(t);
             object obj = DbHelperSQL.GetSingle(BuildInsertSQL(t, excludeField) + ";select @@IDENTITY", ls.ToArray());
-            int id = -1;
             return Convert.ToInt32(obj);
         }
 
@@ -195,15 +212,14 @@ namespace ABC
 
         public bool UpdateByObj<T>(T t, params string[] excludeField) where T : new()
         {
-            return UpdateByObj<T>("id", t, excludeField);
+            return UpdateByObj<T>("ID", t, excludeField);
         }
-        
+
         public bool UpdateByObj<T>(string idname, T t, params string[] excludeField) where T : new()
         {
-            int id = Convert.ToInt32(t.GetType().GetProperty(idname).GetValue(t, null));
-            string sql = BuildUpdateSQL(t, idname,id, excludeField);
+            string sql = BuildUpdateSQL(idname, t, excludeField);
             List<SqlParameter> ls = BuildSqlParameterArray(t, excludeField);
-            return DbHelperSQL.ExecuteSql(sql, ls.ToArray()) != -1;
+            return ExecuteSql(sql, ls.ToArray());
         }
 
         #endregion
@@ -219,6 +235,11 @@ namespace ABC
         {
             SqlDataReader reader = DbHelperSQL.ExecuteReader(sql);
             return BuildTByDataReader<T>(reader);
+        }
+
+        public DataSet GetDataSetBySQL(string sql)
+        {
+            return DbHelperSQL.Query(sql);
         }
 
         #endregion
