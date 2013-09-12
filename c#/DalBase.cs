@@ -315,5 +315,30 @@ namespace HongXiu.Mall.DAL
         #endregion
 
         #endregion
+
+
+        #region 分页获取数据列表 GetList
+
+        public DataTable GetListByPageIndex(int pageSize, int pageIndex, string idName, string tableName, string fieldList, string where, string orderField, string orderType)
+        {
+            SqlParameter[] parameters =             
+            {
+                new SqlParameter("@tableName", tableName),
+                new SqlParameter("@fieldList", fieldList),
+                new SqlParameter("@orderField", orderField),
+                new SqlParameter("@idName", idName),
+                new SqlParameter("@pageIndex", pageIndex),
+                new SqlParameter("@pageSize", pageSize),
+                new SqlParameter("@where", where),
+                new SqlParameter("@orderType", orderType)
+            };
+            string sql =
+            "select top @pageSize @fieldList from @tableName where @idName not in (select top @pageSize * (@pageIndex - 1) @idName from @tableName where 1=1 @where order by @orderField @orderType) and @where order by @orderField @orderType";
+
+            return DbHelperSQL.Query(sql, parameters).Tables[0];
+        }
+
+        #endregion
+
     }
 }
