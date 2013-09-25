@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
+using System.Text;
 
-namespace HongXiu.Mall.DAL
+namespace HongXiu.Comic.DAL
 {
-    public class MallDalBase
+    public class DalBase 
     {
         /// <summary>
         /// SQL 语句缓存
         /// </summary>
-        public static Dictionary<string, string> dicSQLCache = new Dictionary<string, string>();
+        private static Dictionary<string, string> _dicSqlCache = new Dictionary<string, string>();
+        
+        #region 构造
 
-        #region 构造函数 
-
-        public MallDalBase()  { }
-
+        public DalBase()  { }
+        
         #endregion
 
         #region 帮助方法
@@ -27,7 +28,7 @@ namespace HongXiu.Mall.DAL
         /// <typeparam name="T"></typeparam>
         /// <param name="reader"></param>
         /// <returns></returns>
-        protected List<T> BuildTByDataReader<T>(SqlDataReader reader) where T : new()
+        protected List<T> BuildTByDataReader<T>(SqlDataReader reader) where T: new()
         {
             List<T> lsT = new List<T>();
 
@@ -42,10 +43,14 @@ namespace HongXiu.Mall.DAL
                     PropertyInfo fi = t.GetType().GetProperty(reader.GetName(i));
                     if (fi == null)
                         continue;
+
+                    //属性类型
+                    Type fieldType = fi.PropertyType;
+
                     //赋值
                     if (reader[i] != DBNull.Value)
                     {
-                        fi.SetValue(t, Convert.ChangeType(reader[i], fi.PropertyType), null);
+                        fi.SetValue(t, Convert.ChangeType(reader[i], fieldType), null);
                     }
                 }
                 lsT.Add(t);
@@ -59,7 +64,6 @@ namespace HongXiu.Mall.DAL
         /// <summary>
         /// 根据model对象自动构建一个sqlparameter数组
         /// </summary>
-        /// <param name="procut"></param>
         /// <returns></returns>
         protected List<SqlParameter> BuildSqlParameterArray(object obj, params string[] excludeField)
         {
@@ -84,13 +88,12 @@ namespace HongXiu.Mall.DAL
         /// <summary>
         /// 根据model对象自动构建insert sql语句
         /// </summary>
-        /// <param name="procut"></param>
         /// <returns></returns>
-        protected string BuildInsertSQL(object obj, params string[] excludeField)
+        protected string BuildInsertSql(object obj, params string[] excludeField)
         {
-            string key = string.Format("INSERT_SQL_OBJECT-{0}_EXCLUDEFIELD-{1}", obj.ToString(), string.Join("-", excludeField));
-            if (dicSQLCache.ContainsKey(key))
-                return dicSQLCache[key];
+            string key = string.Format("INSERT_SQL_OBJECT-{0}_EXCLUDEFIELD-{1}", obj, string.Join("-", excludeField));
+            if (_dicSqlCache.ContainsKey(key))
+                return _dicSqlCache[key];
 
             string sql = "insert into [{0}]({1}) values({2})";
             string tablename = obj.GetType().Name;
@@ -109,30 +112,28 @@ namespace HongXiu.Mall.DAL
                 }
             }
             sql = string.Format(sql, tablename, string.Join(",", lsFiled1.ToArray()), string.Join(",", lsFiled2.ToArray()));
-            dicSQLCache[key] = sql;
+            _dicSqlCache[key] = sql;
             return sql;
         }
 
         /// <summary>
         /// 根据model对象自动构建update sql语句
         /// </summary>
-        /// <param name="procut"></param>
         /// <returns></returns>
-        protected string BuildUpdateSQL(object obj, params string[] excludeField)
+        protected string BuildUpdateSql(object obj, params string[] excludeField)
         {
-            return BuildUpdateSQL("ID", obj, excludeField);
+            return BuildUpdateSql(obj, "id", excludeField);
         }
 
         /// <summary>
         /// 根据model对象自动构建update sql语句
         /// </summary>
-        /// <param name="procut"></param>
         /// <returns></returns>
-        protected string BuildUpdateSQL(string idname, object obj, params string[] excludeField)
+        protected string BuildUpdateSql(object obj, string idname, params string[] excludeField)
         {
-            string key = string.Format("UPDATE_SQL_OBJECT-{0}_IDNAME-{1}_EXCLUDEFIELD-{2}", obj.ToString(), idname, string.Join("-", excludeField));
-            if (dicSQLCache.ContainsKey(key))
-                return dicSQLCache[key];
+            string key = string.Format("UPDATE_SQL_OBJECT-{0}_IDNAME-{1}_EXCLUDEFIELD-{2}", obj, idname, string.Join("-", excludeField));
+            if (_dicSqlCache.ContainsKey(key))
+                return _dicSqlCache[key];
 
             string sql = "update [{0}] set {1} where {2}=@{2}";
             string tablename = obj.GetType().Name;
@@ -149,7 +150,7 @@ namespace HongXiu.Mall.DAL
                 }
             }
             sql = string.Format(sql, tablename, string.Join(",", lsFiled1.ToArray()), idname);
-            dicSQLCache[key] = sql;
+            _dicSqlCache[key] = sql;
             return sql;
         }
 
@@ -160,12 +161,12 @@ namespace HongXiu.Mall.DAL
 
         #region GetByID
 
-        public T GetByID<T>(int id) where T : class, new()
+        public T GetById<T>(int id) where T : class, new()
         {
-            return GetByID<T>("id", id);
+            return GetById<T>("id", id);
         }
 
-        public T GetByID<T>(string idname, int id) where T : class, new()
+        public T GetById<T>(string idname, int id) where T : class, new()
         {
             string tablename = typeof(T).Name;
             SqlDataReader reader = DbHelperSQL.ExecuteReader(string.Format("select * from [{0}] where {2} = {1}", tablename, id, idname));
@@ -178,15 +179,19 @@ namespace HongXiu.Mall.DAL
 
         #region DelByID
 
-        public bool DelByID<T>(int id)
+        public bool DelById<T>(int id)
         {
-            return DelByID<T>("id", id);
+            return DelById<T>("id", id);
         }
 
-        public bool DelByID<T>(string idname, int id)
+        public bool DelById<T>(string idname, int id)
         {
-            string tablename = typeof(T).Name;
-            return ExecuteSql(string.Format("delete from [{0}] where {2} = {1}", tablename, id, idname));
+            return DelByWhere<T>(string.Format("{0}={1}", idname, id));
+        }
+
+        public bool DelByWhere<T>(string where)
+        {
+            return DbHelperSQL.ExecuteSql(string.Format("delete from [{0}] where {1}", typeof(T).Name, where)) != -1;
         }
 
         #endregion
@@ -196,13 +201,13 @@ namespace HongXiu.Mall.DAL
         public bool AddByObj<T>(T t, params string[] excludeField) where T : new()
         {
             List<SqlParameter> ls = BuildSqlParameterArray(t, excludeField);
-            return ExecuteSql(BuildInsertSQL(t, excludeField), ls.ToArray());
+            return DbHelperSQL.ExecuteSql(BuildInsertSql(t, excludeField), ls.ToArray()) != -1;
         }
 
         public int AddByObj_ReturnInsertID<T>(T t, params string[] excludeField) where T : new()
         {
             List<SqlParameter> ls = BuildSqlParameterArray(t);
-            object obj = DbHelperSQL.GetSingle(BuildInsertSQL(t, excludeField) + ";select @@IDENTITY", ls.ToArray());
+            object obj = DbHelperSQL.GetSingle(BuildInsertSql(t, excludeField) + ";select @@IDENTITY", ls.ToArray());
             return Convert.ToInt32(obj);
         }
 
@@ -212,34 +217,14 @@ namespace HongXiu.Mall.DAL
 
         public bool UpdateByObj<T>(T t, params string[] excludeField) where T : new()
         {
-            return UpdateByObj<T>("ID", t, excludeField);
+            return UpdateByObj("id", t, excludeField);
         }
-
+        
         public bool UpdateByObj<T>(string idname, T t, params string[] excludeField) where T : new()
         {
-            string sql = BuildUpdateSQL(idname, t, excludeField);
+            string sql = BuildUpdateSql(t, idname, excludeField);
             List<SqlParameter> ls = BuildSqlParameterArray(t, excludeField);
-            return ExecuteSql(sql, ls.ToArray());
-        }
-
-        #endregion
-
-        #region GetListBySQL
-
-        public DataTable GetListBySQL(string sql)
-        {
-            return DbHelperSQL.Query(sql).Tables[0];
-        }
-
-        public List<T> GetObjListBySQL<T>(string sql) where T : new()
-        {
-            SqlDataReader reader = DbHelperSQL.ExecuteReader(sql);
-            return BuildTByDataReader<T>(reader);
-        }
-
-        public DataSet GetDataSetBySQL(string sql)
-        {
-            return DbHelperSQL.Query(sql);
+            return DbHelperSQL.ExecuteSql(sql, ls.ToArray()) != -1;
         }
 
         #endregion
@@ -298,28 +283,60 @@ namespace HongXiu.Mall.DAL
             return ExecuteSql(string.Format(sql, tablename, string.Join(",", lsFieldName.ToArray()), string.Join(",", lsFieldValue.ToArray())), lsParameter.ToArray());
         }
 
+        public bool Insert(string tablename, List<Dictionary<string, object>> lsList)
+        {
+            const string sql = "insert {0}({1}) values({2})";
+            StringBuilder sbSql = new StringBuilder();
+            List<SqlParameter> lsParameter = new List<SqlParameter>();
+            int i = 1;
+
+            foreach (Dictionary<string, object> dic in lsList)
+            {
+                List<string> lsFieldName = new List<string>();
+                List<string> lsFieldValue = new List<string>();
+
+                foreach (KeyValuePair<string, object> o in dic)
+                {
+                    lsFieldName.Add(o.Key);
+                    lsFieldValue.Add("@" + o.Key + i);
+                    lsParameter.Add(new SqlParameter("@" + o.Key + i, o.Value));
+                }
+                sbSql.AppendLine(string.Format(sql, tablename, string.Join(",", lsFieldName.ToArray()), string.Join(",", lsFieldValue.ToArray())));
+                i++;
+            }
+            return ExecuteSql(sbSql.ToString(), lsParameter.ToArray());
+        }
+
         #endregion
 
         #region 删除
 
-        public bool Delete(string tablename, string idname, string id)
+        public bool Delete(string tablename, string where)
         {
-            return ExecuteSql(string.Format("delete from {0} where {1} = {2}", tablename, idname, id));
-        }
-
-        public bool Delete(string tablename, string id)
-        {
-            return ExecuteSql(string.Format("delete from {0} where id = {1}", tablename, id));
+            return ExecuteSql(string.Format("delete from {0} where {1}", tablename, where));
         }
 
         #endregion
 
-        #endregion
+        #region 查询
 
+        public DataSet GetDataSetBySql(string sql, params SqlParameter[] sqlParameters)
+        {
+            return DbHelperSQL.Query(sql, sqlParameters);
+        }
 
-        #region 分页获取数据列表 GetList
+        public DataTable GetDataTableBySql(string sql, params SqlParameter[] sqlParameters)
+        {
+            return GetDataSetBySql(sql, sqlParameters).Tables[0];
+        }
 
-        public DataTable GetListByPageIndex(int pageSize, int pageIndex, string idName, string tableName, string fieldList, string where, string orderField, string orderType)
+        public List<T> GetObjListBySql<T>(string sql, params SqlParameter[] sqlParameters) where T : new()
+        {
+            SqlDataReader reader = DbHelperSQL.ExecuteReader(sql, sqlParameters);
+            return BuildTByDataReader<T>(reader);
+        }
+
+        public DataTable GetDataTableByPageIndex(int pageSize, int pageIndex, string idName, string tableName, string fieldList, string where, string orderField, string orderType)
         {
             SqlParameter[] parameters =             
             {
@@ -332,13 +349,12 @@ namespace HongXiu.Mall.DAL
                 new SqlParameter("@where", where),
                 new SqlParameter("@orderType", orderType)
             };
-            string sql =
-            "select top @pageSize @fieldList from @tableName where @idName not in (select top @pageSize * (@pageIndex - 1) @idName from @tableName where 1=1 @where order by @orderField @orderType) and @where order by @orderField @orderType";
-
-            return DbHelperSQL.Query(sql, parameters).Tables[0];
+            const string sql = "select top @pageSize @fieldList from @tableName where @idName not in (select top @pageSize * (@pageIndex - 1) @idName from @tableName where 1=1 @where order by @orderField @orderType) and @where order by @orderField @orderType";
+            return GetDataTableBySql(sql, parameters);
         }
 
         #endregion
 
+        #endregion
     }
 }
