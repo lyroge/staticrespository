@@ -5,18 +5,16 @@ using System.Data.SqlClient;
 using System.Reflection;
 using System.Text;
 
-namespace HongXiu.Comic.DAL
-{
-    public class DalBase 
+    public class DalBase
     {
-        /// <summary>
+       /// <summary>
         /// SQL 语句缓存
         /// </summary>
         private static Dictionary<string, string> _dicSqlCache = new Dictionary<string, string>();
         
         #region 构造
 
-        public DalBase()  { }
+        public DalBase() { }
         
         #endregion
 
@@ -159,7 +157,7 @@ namespace HongXiu.Comic.DAL
 
         #endregion
 
-        #region GetByID
+        #region GetById
 
         public T GetById<T>(int id) where T : class, new()
         {
@@ -177,7 +175,7 @@ namespace HongXiu.Comic.DAL
 
         #endregion
 
-        #region DelByID
+        #region DelById
 
         public bool DelById<T>(int id)
         {
@@ -217,7 +215,7 @@ namespace HongXiu.Comic.DAL
 
         public bool UpdateByObj<T>(T t, params string[] excludeField) where T : new()
         {
-            return UpdateByObj("id", t, excludeField);
+            return UpdateByObj("ID", t, excludeField);
         }
         
         public bool UpdateByObj<T>(string idname, T t, params string[] excludeField) where T : new()
@@ -242,9 +240,9 @@ namespace HongXiu.Comic.DAL
 
         #region 更新
 
-        public bool Update(string tablename, string idname, string id, Dictionary<string, object> kv)
+        public bool Update(string tablename, Dictionary<string, object> kv, string where)
         {
-            string sql = "update {0} set {1} where {2}={3}";
+            string sql = "update {0} set {1} where {2}";
 
             List<string> lsFieldName = new List<string>();
             List<SqlParameter> lsParameter = new List<SqlParameter>();
@@ -254,7 +252,12 @@ namespace HongXiu.Comic.DAL
                 lsFieldName.Add(string.Format("{0}=@{0}", o.Key));
                 lsParameter.Add(new SqlParameter("@" + o.Key, o.Value));
             }
-            return ExecuteSql(string.Format(sql, tablename, string.Join(",", lsFieldName.ToArray()), idname, id), lsParameter.ToArray());
+            return ExecuteSql(string.Format(sql, tablename, string.Join(",", lsFieldName.ToArray()), where), lsParameter.ToArray());
+        }
+
+        public bool Update(string tablename, string idname, string id, Dictionary<string, object> kv)
+        {
+            return Update(tablename, kv, idname + "=" + id);
         }
 
         public bool Update(string tablename, string id, Dictionary<string, object> kv)
@@ -357,4 +360,3 @@ namespace HongXiu.Comic.DAL
 
         #endregion
     }
-}
