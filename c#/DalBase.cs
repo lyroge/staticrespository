@@ -341,19 +341,14 @@ using System.Text;
 
         public DataTable GetDataTableByPageIndex(int pageSize, int pageIndex, string idName, string tableName, string fieldList, string where, string orderField, string orderType)
         {
-            SqlParameter[] parameters =             
-            {
-                new SqlParameter("@tableName", tableName),
-                new SqlParameter("@fieldList", fieldList),
-                new SqlParameter("@orderField", orderField),
-                new SqlParameter("@idName", idName),
-                new SqlParameter("@pageIndex", pageIndex),
-                new SqlParameter("@pageSize", pageSize),
-                new SqlParameter("@where", where),
-                new SqlParameter("@orderType", orderType)
-            };
-            const string sql = "select top @pageSize @fieldList from @tableName where @idName not in (select top @pageSize * (@pageIndex - 1) @idName from @tableName where 1=1 @where order by @orderField @orderType) and @where order by @orderField @orderType";
-            return GetDataTableBySql(sql, parameters);
+            int notTop = pageSize*(pageIndex - 1);
+
+            string sql = string.Format("select top {0} {1} from {2} " +
+                                       "where {3} not in " +
+                                       "(select top {4} {3} from {2} " +
+                                       "where 1=1 {5} order by {6} {7}) {5} " +
+                                       "order by {6} {7}", pageSize, fieldList, tableName, idName, notTop, where, orderField, orderType);
+            return GetDataTableBySql(sql);
         }
 
         #endregion
