@@ -91,4 +91,4 @@ for i in range(10):
 	opener.open(request, urllib.urlencode(params))
 
 	print '·¢ËÍ³É¹¦'
-	time.sleep(30)
+	time.sleep(60)
