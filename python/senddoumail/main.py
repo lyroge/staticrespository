@@ -1,5 +1,5 @@
 # -- coding:gbk --
-import sys, time, os, re
+import sys, time, os, re, datetime, random
 import urllib, urllib2, cookielib
 
 def get_str_from_text(re_str, text):
@@ -72,23 +72,24 @@ for i in range(10):
 		res=urllib.urlretrieve(captcha_img_val, 'v.jpg')
 		vcode=raw_input('请输入图片上的验证码：')
 
-	content = u"你好，啦啦啦"
+	content = random.choice ( ['apple', 'pear', 'peach', 'orange', 'lemon'] ) #u"你好，啦啦啦"
+	m_submit = u"好了，寄出去"
 
 	params = {
 	"to":"49589762",
 	"action":"m_reply",
-	"m_text":content.encode('utf-8'),
+	"m_text":datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + content,#.encode('utf-8') ,
 	"captcha-id":captcha_id_val, 
 	"captcha-solution":vcode,
-	"ck":ck_val
+	"ck":ck_val,
+	"m_submit":m_submit.encode('utf-8')
 	}
 
 	request=urllib2.Request(doumail_url)
 	request.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11")
 	request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
-	request.add_header("Origin", "http://www.douban.com")
-	request.add_header("Referer", "http://www.douban.com/")
+	request.add_header("Referer", doumail_url)
 	opener.open(request, urllib.urlencode(params))
 
 	print '发送成功'
-	time.sleep(60)
+	time.sleep(60*2)
