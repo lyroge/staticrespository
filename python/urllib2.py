@@ -22,6 +22,7 @@ cookie = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
 
 ### post ≤¢«“Ω” ‹cookie
+### login_params = {}
 response=opener.open(login_url, urllib.urlencode(login_params))
 
 
