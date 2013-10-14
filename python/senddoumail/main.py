@@ -19,9 +19,16 @@ if __name__ == "__main__":
 	#login
 	login_douban()
 
+	i = 0
 	while True:
 		content = random_text_from_keywords().encode('utf-8')
 		send_doumail(doumail_url, doumail_url1, "49589762", content)
 
 		for i in range(0,2):
-			send_doumail(doumail_url, doumail_url, "23416934", "有个聚会的活动，你知道吗")
+			send_doumail(doumail_url2, doumail_url3, "23416934", "你好， 啦啦啦啦")
+
+		time.sleep(5)
+
+		i = i+1
+		if i > 100:
+			break
