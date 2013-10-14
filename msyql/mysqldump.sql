@@ -29,3 +29,6 @@ mysqldump -uroot -pabc freeb2b product --where="id=1" > 1.sql		√
 
 ***************************************导入数据：**************************
 mysql 数据库名 < 文件名
+
+导出：mysqldump -h localhost -u root -p mydb >e:\mysql\mydb.sql
+导入：mysql -h localhost -u root -p mydb2 < e:\mysql\mydb2.sql
