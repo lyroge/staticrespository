@@ -34,6 +34,16 @@ def login_douban():
 	else:
 		print 'login success !'
 
+def random_text_from_keywords():
+	f=open("keywords.txt", "r")
+	text = f.read().decode('utf-8')
+
+	s = u"";
+	for i in range(random.randint(7, 15), random.randint(19, 215)):
+		s = s + text[random.randint(1, len(text))];
+	return s
+
+
 def send_doumail(doumail_url, doumail_url1, userid, content):
 	try:
 		response=opener.open(doumail_url)
@@ -71,3 +81,4 @@ def send_doumail(doumail_url, doumail_url1, userid, content):
 	opener.open(request, urllib.urlencode(params))
 
 	print 'send success'
+

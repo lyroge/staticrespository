@@ -1,7 +1,7 @@
 # -- coding:utf-8 --
 import sys, time, os, re, datetime, random
 import urllib, urllib2, cookielib
-from fun import send_doumail, login_douban
+from fun import send_doumail, login_douban, random_text_from_keywords
 
 
 #doumain fist
@@ -15,15 +15,13 @@ doumail_url3 = "http://www.douban.com/doumail/write?to=23416934"
 
 if __name__ == "__main__":
 
+
 	#login
 	login_douban()
 
 	while True:
-		for i in range(0,1):
-			content = random.choice(["护肤goodal", "果缤纷 唇彩液", "不是真的吧", "今天是你的生日，恭喜生日快乐", "It doesn't matter how many times you fail.", "It's point that how many times you stand ", "失败多少次不重要,只要站起来比倒下去的次数多一次就是成功！","周一，加油啊！ 亲", "按照这样的计算法则， 我们无法成为朋友", "hi, 美女， 约会吗 ？？ ", "every Tom 的意思是?", "如何用英语自然表达“爱你”？", "这里是你的主页，用来展示你的生活和发现", "http://www.douban.com/doumail 豆油我吧", "恩  时间还可以的", "不是不行吗 ？ 你一看我就是人工发啊", ""])
-			send_doumail(doumail_url, doumail_url1, "49589762", content)
+		content = random_text_from_keywords().encode('utf-8')
+		send_doumail(doumail_url, doumail_url1, "49589762", content)
 
-		for i in range(0,1):
-			send_doumail(doumail_url2, doumail_url3, "23416934", "有个聚会的活动，你知道吗")
-
-		#time.sleep(1)
+		for i in range(0,2):
+			send_doumail(doumail_url, doumail_url, "23416934", "有个聚会的活动，你知道吗")
