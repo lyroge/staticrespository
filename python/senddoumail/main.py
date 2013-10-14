@@ -1,95 +1,54 @@
-# -- coding:gbk --
+# -- coding:utf-8 --
 import sys, time, os, re, datetime, random
 import urllib, urllib2, cookielib
-
-def get_str_from_text(re_str, text):
-	a = re.search(re_str, text)
-	if a:
-		return a.group(1)
-	return ""
+from fun import send_doumail, login_douban, random_text_from_keywords
+import MySQLdb, MySQLdb.cursors
 
 
-loginurl = 'https://www.douban.com/accounts/login'
-cookie = cookielib.CookieJar()
-opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
-
-params = {
-"form_email":"terrygon@163.com",
-"form_password":"123456test",
-"source":"index_nav" #Ã»ÓĞµÄ»°µÇÂ¼²»³É¹¦
-}
-
-#´ÓÊ×Ò³Ìá½»µÇÂ¼
-response=opener.open(loginurl, urllib.urlencode(params))
-
-#ÑéÖ¤³É¹¦Ìø×ªÖÁµÇÂ¼Ò³
-if response.geturl() == "https://www.douban.com/accounts/login":
-	html=response.read()
-
-	#ÑéÖ¤ÂëÍ¼Æ¬µØÖ·
-	imgurl=re.search('<img id="captcha_image" src="(.+?)" alt="captcha" class="captcha_image"/>', html)
-	if imgurl:
-		url=imgurl.group(1)
-		#½«Í¼Æ¬±£´æÖÁÍ¬Ä¿Â¼ÏÂ
-		res=urllib.urlretrieve(url, 'v.jpg')
-		#»ñÈ¡captcha-id²ÎÊı
-		captcha=re.search('<input type="hidden" name="captcha-id" value="(.+?)"/>' ,html)
-		if captcha:
-			vcode=raw_input('ÇëÊäÈëÍ¼Æ¬ÉÏµÄÑéÖ¤Âë£º')
-			params["captcha-solution"] = vcode
-			params["captcha-id"] = captcha.group(1)
-			params["user_login"] = "µÇÂ¼"
-			#Ìá½»ÑéÖ¤ÂëÑéÖ¤
-			response=opener.open(loginurl, urllib.urlencode(params))
-			''' µÇÂ¼³É¹¦Ìø×ªÖÁÊ×Ò³ '''
-			if response.geturl() == "http://www.douban.com/":
-				print 'login success ! (have validate image)'
-else:
-	print 'login success ! (have no validate image)'
-
-
-#·¢¶¹ÓÍ
+#doumain fist
 doumail_url = "http://www.douban.com/doumail/49589762/"
 doumail_url1 = "http://www.douban.com/doumail/write?to=49589762"
 
+#doumain second
+doumail_url2= "http://www.douban.com/doumail/23416934/"
+doumail_url3 = "http://www.douban.com/doumail/write?to=23416934"
 
-for i in range(10):
+send_content = '''
+ç”¨æˆ· æœ‰ä¸ªæ ‡  http://www.douban.com/event/1994032246/
+'''
 
-	try:
-		response=opener.open(doumail_url)
-	except:
-		response=opener.open(doumail_url1)
-		doumail_url = doumail_url1
+conn = MySQLdb.connect(host='localhost',user='root',passwd='abc',db='fadouyou',cursorclass=MySQLdb.cursors.DictCursor)
+cursor=conn.cursor()
+items=[]
+cursor.execute("SELECT id, url FROM douyou_user  where content_id is null")
+result = cursor.fetchall()
+for r in result:
+	items.append((r["id"], r["url"]))
 
-	html=response.read()	
-	ck_val = get_str_from_text('<input type="hidden" name="ck" value="(.+?)"/>', html)
-	captcha_id_val = get_str_from_text('<input type="hidden" name="captcha-id" value="(.+?)"/>', html)
-	captcha_img_val = get_str_from_text('<img src="(.+?)" alt="captcha"/>', html)
+content = None
+cursor.execute("SELECT content_id, content FROM douyou_content")
+result = cursor.fetchone()
+douyou_content = (result["content_id"], result["content"])
+print douyou_content
 
-	vcode=''
-	if captcha_id_val:
-		#½«Í¼Æ¬±£´æÖÁÍ¬Ä¿Â¼ÏÂ
-		res=urllib.urlretrieve(captcha_img_val, 'v.jpg')
-		vcode=raw_input('ÇëÊäÈëÍ¼Æ¬ÉÏµÄÑéÖ¤Âë£º')
+if __name__ == "__main__":
 
-	content = random.choice ( ['apple', 'pear', 'peach', 'orange', 'lemon'] ) #u"ÄãºÃ£¬À²À²À²"
-	m_submit = u"ºÃÁË£¬¼Ä³öÈ¥"
+	#login
+	login_douban()
 
-	params = {
-	"to":"49589762",
-	"action":"m_reply",
-	"m_text":datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + content,#.encode('utf-8') ,
-	"captcha-id":captcha_id_val, 
-	"captcha-solution":vcode,
-	"ck":ck_val,
-	"m_submit":m_submit.encode('utf-8')
-	}
+	for item in items:
+		content = random_text_from_keywords().encode('utf-8')
+		send_doumail(doumail_url, doumail_url1, "49589762", content)
 
-	request=urllib2.Request(doumail_url)
-	request.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11")
-	request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
-	request.add_header("Referer", doumail_url)
-	opener.open(request, urllib.urlencode(params))
+		url = item[1]		
+		uid = str(url[url.find("to=")+3:])
 
-	print '·¢ËÍ³É¹¦'
-	time.sleep(60*2)
+		send_doumail("http://www.douban.com/doumail/"+uid + "/", "http://www.douban.com/doumail/write?to="+uid, uid, douyou_content[1])
+		sql = "update douyou_user set content_id="+str(douyou_content[0]) + " where id = " + str(item[0])
+		cursor.execute(sql)
+		conn.commit()
+
+		time.sleep(5)
+
+cursor.close() 
+conn.close()
