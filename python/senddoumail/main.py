@@ -1,95 +1,28 @@
-# -- coding:gbk --
+# -- coding:utf-8 --
 import sys, time, os, re, datetime, random
 import urllib, urllib2, cookielib
-
-def get_str_from_text(re_str, text):
-	a = re.search(re_str, text)
-	if a:
-		return a.group(1)
-	return ""
+from fun import send_doumail, login_douban
 
 
-loginurl = 'https://www.douban.com/accounts/login'
-cookie = cookielib.CookieJar()
-opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
-
-params = {
-"form_email":"terrygon@163.com",
-"form_password":"123456test",
-"source":"index_nav" #Ã»ÓĞµÄ»°µÇÂ¼²»³É¹¦
-}
-
-#´ÓÊ×Ò³Ìá½»µÇÂ¼
-response=opener.open(loginurl, urllib.urlencode(params))
-
-#ÑéÖ¤³É¹¦Ìø×ªÖÁµÇÂ¼Ò³
-if response.geturl() == "https://www.douban.com/accounts/login":
-	html=response.read()
-
-	#ÑéÖ¤ÂëÍ¼Æ¬µØÖ·
-	imgurl=re.search('<img id="captcha_image" src="(.+?)" alt="captcha" class="captcha_image"/>', html)
-	if imgurl:
-		url=imgurl.group(1)
-		#½«Í¼Æ¬±£´æÖÁÍ¬Ä¿Â¼ÏÂ
-		res=urllib.urlretrieve(url, 'v.jpg')
-		#»ñÈ¡captcha-id²ÎÊı
-		captcha=re.search('<input type="hidden" name="captcha-id" value="(.+?)"/>' ,html)
-		if captcha:
-			vcode=raw_input('ÇëÊäÈëÍ¼Æ¬ÉÏµÄÑéÖ¤Âë£º')
-			params["captcha-solution"] = vcode
-			params["captcha-id"] = captcha.group(1)
-			params["user_login"] = "µÇÂ¼"
-			#Ìá½»ÑéÖ¤ÂëÑéÖ¤
-			response=opener.open(loginurl, urllib.urlencode(params))
-			''' µÇÂ¼³É¹¦Ìø×ªÖÁÊ×Ò³ '''
-			if response.geturl() == "http://www.douban.com/":
-				print 'login success ! (have validate image)'
-else:
-	print 'login success ! (have no validate image)'
-
-
-#·¢¶¹ÓÍ
+#doumain fist
 doumail_url = "http://www.douban.com/doumail/49589762/"
 doumail_url1 = "http://www.douban.com/doumail/write?to=49589762"
 
+#doumain second
+doumail_url2= "http://www.douban.com/doumail/23416934/"
+doumail_url3 = "http://www.douban.com/doumail/write?to=23416934"
 
-for i in range(10):
 
-	try:
-		response=opener.open(doumail_url)
-	except:
-		response=opener.open(doumail_url1)
-		doumail_url = doumail_url1
+if __name__ == "__main__":
 
-	html=response.read()	
-	ck_val = get_str_from_text('<input type="hidden" name="ck" value="(.+?)"/>', html)
-	captcha_id_val = get_str_from_text('<input type="hidden" name="captcha-id" value="(.+?)"/>', html)
-	captcha_img_val = get_str_from_text('<img src="(.+?)" alt="captcha"/>', html)
+	#login
+	login_douban()
 
-	vcode=''
-	if captcha_id_val:
-		#½«Í¼Æ¬±£´æÖÁÍ¬Ä¿Â¼ÏÂ
-		res=urllib.urlretrieve(captcha_img_val, 'v.jpg')
-		vcode=raw_input('ÇëÊäÈëÍ¼Æ¬ÉÏµÄÑéÖ¤Âë£º')
+	for i in range(1,61):
+		if (i == 1 or i % 2 == 0):
+			content = random.choice(["ä»Šå¤©æ˜¯ä½ çš„ç”Ÿæ—¥ï¼Œæ­å–œç”Ÿæ—¥å¿«ä¹", "It doesn't matter how many times you fail.", "It's point that how many times you stand ", "å¤±è´¥å¤šå°‘æ¬¡ä¸é‡è¦,åªè¦ç«™èµ·æ¥æ¯”å€’ä¸‹å»çš„æ¬¡æ•°å¤šä¸€æ¬¡å°±æ˜¯æˆåŠŸï¼","å‘¨ä¸€ï¼ŒåŠ æ²¹å•Šï¼ äº²", "æŒ‰ç…§è¿™æ ·çš„è®¡ç®—æ³•åˆ™ï¼Œ æˆ‘ä»¬æ— æ³•æˆä¸ºæœ‹å‹", "hi, ç¾å¥³ï¼Œ çº¦ä¼šå— ï¼Ÿï¼Ÿ ", "every Tom çš„æ„æ€æ˜¯?", "å¦‚ä½•ç”¨è‹±è¯­è‡ªç„¶è¡¨è¾¾â€œçˆ±ä½ â€ï¼Ÿ", "è¿™é‡Œæ˜¯ä½ çš„ä¸»é¡µï¼Œç”¨æ¥å±•ç¤ºä½ çš„ç”Ÿæ´»å’Œå‘ç°", "http://www.douban.com/doumail è±†æ²¹æˆ‘å§", "æ©  æ—¶é—´è¿˜å¯ä»¥çš„", "ä¸æ˜¯ä¸è¡Œå— ï¼Ÿ ä½ ä¸€çœ‹æˆ‘å°±æ˜¯äººå·¥å‘å•Š", ""])
+			send_doumail(doumail_url, doumail_url1, "49589762", content)
+		else:
+			send_doumail(doumail_url2, doumail_url3, "23416934", "æœ‰ä¸ªèšä¼šçš„æ´»åŠ¨ï¼Œä½ çŸ¥é“å—")
 
-	content = random.choice ( ['apple', 'pear', 'peach', 'orange', 'lemon'] ) #u"ÄãºÃ£¬À²À²À²"
-	m_submit = u"ºÃÁË£¬¼Ä³öÈ¥"
-
-	params = {
-	"to":"49589762",
-	"action":"m_reply",
-	"m_text":datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + content,#.encode('utf-8') ,
-	"captcha-id":captcha_id_val, 
-	"captcha-solution":vcode,
-	"ck":ck_val,
-	"m_submit":m_submit.encode('utf-8')
-	}
-
-	request=urllib2.Request(doumail_url)
-	request.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11")
-	request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
-	request.add_header("Referer", doumail_url)
-	opener.open(request, urllib.urlencode(params))
-
-	print '·¢ËÍ³É¹¦'
-	time.sleep(60*2)
+		time.sleep(random.randint(5,10))
