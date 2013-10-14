@@ -39,7 +39,7 @@ def random_text_from_keywords():
 	text = f.read().decode('utf-8')
 
 	s = u"";
-	for i in range(random.randint(7, 15), random.randint(19, 215)):
+	for i in range(random.randint(7, 15), random.randint(19, 515)):
 		s = s + text[random.randint(1, len(text))];
 	return s
 
