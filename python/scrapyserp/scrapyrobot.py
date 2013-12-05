@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-url = 'https://www.google.com.hk/search?safe=strict&site=&source=hp&q=leg+warmers'
-url = 'http://pgl.yoyo.org/http/browser-headers.php'
-
-
 import urllib, urllib2, cookielib, random
 from proxy import ProxyRobot
 from settings import USER_AGENT_LIST,PROXY_ENABLE
@@ -40,15 +36,15 @@ class ProxyScrapy(object):
         opener = self.__builder_proxy_cookie_opener()
 
         request=urllib2.Request(url)
-        request.add_header("User-Agent",random.choice(USER_AGENT_LIST))
-        request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
+        #request.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17")#random.choice(USER_AGENT_LIST)
+        #request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
         #request.add_header("Accept-Encoding", "gzip,deflate,sdch")
-        request.add_header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-        request.add_header("Cache-Control", "no-cache")
-        request.add_header("Connection", "keep-alive")
+        #request.add_header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+        #request.add_header("Cache-Control", "no-cache")
+        #request.add_header("Connection", "keep-alive")
 
         try:
-            response = opener.open(request)
+            response = opener.open(request,timeout=2)
 
             http_code = response.getcode()
             if http_code == 200:
@@ -61,7 +57,7 @@ class ProxyScrapy(object):
                     self.proxy_robot.handle_double_proxy(self.current_proxy)
                 return self.get_html_body(url)
         except Exception as inst:
-            print inst
+            print inst,self.current_proxy
             self.proxy_robot.handle_double_proxy(self.current_proxy)
             return self.get_html_body(url)
 

@@ -14,7 +14,7 @@ USER_AGENT_LIST = ['Mozilla/6.0 (Windows NT 6.2; WOW64; rv:16.0.1) Gecko/2012101
 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Maxthon/3.0)']
 
 PROXY_ENABLE = True #True
-PROXY_TEST_URL = "http://hellocompanies.com/"
+PROXY_TEST_URL = "http://www.alibaba.com/products/F0/leg_warmers/1.html"
 PROXY_URL = 'TAOBAO'
 PROXY_URL_DICT = {
     'HTTP_FAST':'http://51dai.li/http_fast.html',
