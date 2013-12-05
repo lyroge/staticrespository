@@ -42,7 +42,7 @@ class ProxyScrapy(object):
         request=urllib2.Request(url)
         request.add_header("User-Agent",random.choice(USER_AGENT_LIST))
         request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
-        request.add_header("Accept-Encoding", "gzip,deflate,sdch")
+        #request.add_header("Accept-Encoding", "gzip,deflate,sdch")
         request.add_header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
         request.add_header("Cache-Control", "no-cache")
         request.add_header("Connection", "keep-alive")

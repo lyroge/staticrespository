@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 url = 'https://www.google.com.hk/search?hl=en&num=10&q=leg+warmers'
-url = 'http://pgl.yoyo.org/http/browser-headers.php'
+#url = 'http://pgl.yoyo.org/http/browser-headers.php'
 
 from scrapyrobot import ProxyScrapy
 
