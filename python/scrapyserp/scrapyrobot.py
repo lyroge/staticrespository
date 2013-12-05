@@ -39,14 +39,19 @@ class ProxyScrapy(object):
         request.add_header("User-Agent",random.choice(USER_AGENT_LIST))
         request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
 
-        response = opener.open(request)
+        try:
+            response = opener.open(request)
 
-        http_code = response.getcode()
-        if http_code == 200:
-            self.proxy_robot.handle_success_proxy(self.current_proxy)
-            html = response.read()
-            return html
-        else:
+            http_code = response.getcode()
+            if http_code == 200:
+                self.proxy_robot.handle_success_proxy(self.current_proxy)
+                html = response.read()
+                return html
+            else:
+                self.proxy_robot.handle_double_proxy(self.current_proxy)
+                return self.get_html_body(url)
+        except Exception as inst:
+            print inst
             self.proxy_robot.handle_double_proxy(self.current_proxy)
             return self.get_html_body(url)
 
