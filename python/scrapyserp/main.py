@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-url = 'http://www.google.com.hk/search?q=leg+warmers'
-#url = 'http://pgl.yoyo.org/http/browser-headers.php'
+url = 'https://www.google.com.hk/search?hl=en&num=10&q=leg+warmers'
+url = 'http://pgl.yoyo.org/http/browser-headers.php'
 
 from scrapyrobot import ProxyScrapy
 

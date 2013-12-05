@@ -12,3 +12,15 @@ USER_AGENT_LIST = ['Mozilla/6.0 (Windows NT 6.2; WOW64; rv:16.0.1) Gecko/2012101
 'Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)',
 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; TencentTraveler 4.0; Trident/4.0; SLCC1; Media Center PC 5.0; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30618)',
 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Maxthon/3.0)']
+
+PROXY_ENABLE = True #True
+PROXY_TEST_URL = "http://hellocompanies.com/"
+PROXY_URL = 'TAOBAO'
+PROXY_URL_DICT = {
+    'HTTP_FAST':'http://51dai.li/http_fast.html',
+    'HTTP_ANONYMOUS':'http://51dai.li/http_anonymous.html',
+    'HTTP_NON_ANONYMOUS':'http://51dai.li/http_non_anonymous.html',
+    'TAOBAO':'http://taobaofou.com/http_anonymous.html'
+}
+PROXY_TEST_TIMEOUT = 2
+SKIP_PROXY_TEST = True

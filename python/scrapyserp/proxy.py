@@ -7,18 +7,7 @@ from scrapy.exceptions import IgnoreRequest,CloseSpider
 from scrapy.http import Request,Response,TextResponse,HtmlResponse 
 from scrapy.selector import HtmlXPathSelector
 import random, urllib2, os
-
-
-PROXY_TEST_URL = "http://hellocompanies.com/"
-PROXY_URL = 'TAOBAO'
-PROXY_URL_DICT = {
-    'HTTP_FAST':'http://51dai.li/http_fast.html',
-    'HTTP_ANONYMOUS':'http://51dai.li/http_anonymous.html',
-    'HTTP_NON_ANONYMOUS':'http://51dai.li/http_non_anonymous.html',
-    'TAOBAO':'http://taobaofou.com/http_anonymous.html'
-}
-PROXY_TEST_TIMEOUT = 2
-SKIP_PROXY_TEST = True
+from settings import PROXY_TEST_URL,PROXY_URL,PROXY_URL_DICT,PROXY_TEST_TIMEOUT,SKIP_PROXY_TEST
 
 class ProxyRobot(object): 
     def __init__(self):

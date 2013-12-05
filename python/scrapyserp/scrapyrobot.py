@@ -7,7 +7,7 @@ url = 'http://pgl.yoyo.org/http/browser-headers.php'
 
 import urllib, urllib2, cookielib, random
 from proxy import ProxyRobot
-from settings import USER_AGENT_LIST
+from settings import USER_AGENT_LIST,PROXY_ENABLE
 
 class ProxyScrapy(object):
     def __init__(self):
@@ -15,13 +15,16 @@ class ProxyScrapy(object):
         self.current_proxy = None
         self.cookie = cookielib.CookieJar()
     
-    def __builder_proxy_cookie_opener(self):
-        self.current_proxy = ip_port = self.proxy_robot.get_random_proxy()
-        
-        cookie_handler = urllib2.HTTPCookieProcessor(self.cookie)
-        proxy_handler = urllib2.ProxyHandler({'http': ip_port[7:]})
+    def __builder_proxy_cookie_opener(self):        
+        cookie_handler = urllib2.HTTPCookieProcessor(self.cookie)        
+        handlers = [cookie_handler]
 
-        opener = urllib2.build_opener(proxy_handler, cookie_handler)
+        if PROXY_ENABLE:
+            self.current_proxy = ip_port = self.proxy_robot.get_random_proxy()
+            proxy_handler = urllib2.ProxyHandler({'http': ip_port[7:]})
+            handlers.append(proxy_handler)
+        
+        opener = urllib2.build_opener(*handlers)
         urllib2.install_opener(opener)
         return opener
 
@@ -49,11 +52,13 @@ class ProxyScrapy(object):
 
             http_code = response.getcode()
             if http_code == 200:
-                self.proxy_robot.handle_success_proxy(self.current_proxy)
+                if PROXY_ENABLE:
+                    self.proxy_robot.handle_success_proxy(self.current_proxy)
                 html = response.read()
                 return html
             else:
-                self.proxy_robot.handle_double_proxy(self.current_proxy)
+                if PROXY_ENABLE:
+                    self.proxy_robot.handle_double_proxy(self.current_proxy)
                 return self.get_html_body(url)
         except Exception as inst:
             print inst
