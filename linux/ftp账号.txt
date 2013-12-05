@@ -1,0 +1,9 @@
+1.建立系统账号
+useradd -G ftp –d /home/userhome –M username
+
+2.修改文件夹所属
+chown nginx:ningx dir/
+
+
+3.修改读写属性
+chmod a+w dir/
