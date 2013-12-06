@@ -95,7 +95,7 @@ class MainHandler(tornado.web.RequestHandler):
         self.render('index.html', books=a)
 
 application = tornado.web.Application([
-    (r"/", MainHandler),
+    (r"/keywordtool/", MainHandler),
 ])
 
 if __name__ == "__main__":
