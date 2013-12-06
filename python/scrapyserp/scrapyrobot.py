@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import urllib, urllib2, cookielib, random
+import urllib, urllib2, cookielib, random, os
 from proxy import ProxyRobot
 from settings import USER_AGENT_LIST,PROXY_ENABLE
 
@@ -51,6 +51,9 @@ class ProxyScrapy(object):
                 if PROXY_ENABLE:
                     self.proxy_robot.handle_success_proxy(self.current_proxy)
                 html = response.read()
+                '''f=open(os.path.basename(url), 'w')
+                f.write(html)
+                f.close()'''
                 return html
             else:
                 if PROXY_ENABLE:
