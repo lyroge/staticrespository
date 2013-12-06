@@ -7,6 +7,7 @@ url = 'https://www.google.com.hk/search?hl=en&num=10&q=leg+warmers'
 url = 'http://www.alibaba.com/products/F0/%s/%s.html'
 
 import re
+from collections import OrderedDict
 from scrapyrobot import ProxyScrapy
 from pyquery import PyQuery as pq
 from time import clock
@@ -27,7 +28,7 @@ def search_keywords_rank(keyword_company_name, keywords):
             return get_context(url)
         return items, items_c
 
-    result = {}
+    result = OrderedDict()
     for keyword in keywords:
         for page_index in range(1,21):
             u = url % (re.sub('\s+', '_', keyword.strip()), page_index)
