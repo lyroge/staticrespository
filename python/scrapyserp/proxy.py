@@ -20,13 +20,13 @@ class ProxyRobot(object):
             self._get_proxy_from_website()
 
         self.i = 0
-        self.j=random.randint(1, 1)
-        self.proxy = random.choice(self.proxies) if self.proxies else None
+        self.j = 0
+        self.proxy = []
 
     def get_random_proxy(self):
         if  self.i == self.j:
             self.i = 0
-            self.j = random.randint(1, 1)
+            self.j = random.randint(1, 2)
 
             #get proxy list from website again
             if (not self.proxies) or len(self.proxies) == 0:
@@ -45,7 +45,7 @@ class ProxyRobot(object):
             if self.PROXY_ERROR_COUNT[current_proxy] >= 10:
                 del self.PROXY_ERROR_COUNT[current_proxy]
                 self.proxies.remove(current_proxy)
-                print '\r\n remove proxy : %s' % current_proxy
+                print '\r\nremove proxy : %s' % current_proxy
 
                 #update proxy list file
                 if self.proxies:
@@ -81,6 +81,8 @@ class ProxyRobot(object):
         if not os.path.exists('proxy'):
             os.mkdir('proxy') 
         with open(self.PROXY_FILE, 'w+') as f:
+            opener = urllib2.build_opener()
+            urllib2.install_opener(opener)
             response = urllib2.urlopen(PROXY_URL_DICT[PROXY_URL]) 
             scrapy_reponse = HtmlResponse(url=response.url, body=response.read())
             hxs = HtmlXPathSelector(scrapy_reponse)
