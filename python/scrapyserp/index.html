@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> 阿里巴巴关键词排名查询工具 </title>
+ </head>
+
+ <body>
+ <form method="post" action="">
+	<h1>阿里巴巴关键词排名查询工具</h1>
+	<h3>提示：本工具只查询搜索页的前8页，搜索关键词最多5个（以逗号分隔）</h3>
+
+	<table>
+	<tr>
+		<td>公司阿里巴巴地址 :</td>	<td> <input type="text" name="companyname" id="companyname" / > 如 : xxxx.en.alibaba.com </td>
+	</tr>
+	<tr>
+		<td colspan="2">要搜索的关键词 : </td>
+		<td></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<textarea type="text" name="keywords" id="keywords" style="width:240px;height:180px;"></textarea>  逗号分隔，最多5个词
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+				<table cellpadding=0 cellspacing=0 border=1 style='border-collapse:collapse;margin-top:20px;'>
+					<tr>
+						<th>关键字</th><th>产品</th><th>页码</th><th>页内排行</th><th>总排行</th><th>排名地址链接</th>
+					</tr>
+					{% for k,v in books.iteritems() %}
+					<tr>
+						<td>{{k}}</td>
+						<td><a href="{{v[1]}}" target="_blank">{{v[0]}}</a></td>
+						<td>{{v[2]}}</td>
+						<td>{{v[3]}}</td>
+						<td>{{v[4]}}</td>
+						<td><a href="{{v[5]}}" target="_blank">{{v[5]}}</a></td>
+					</tr>
+					{% end %}
+				</table>
+		</td>
+	</tr>
+	</table>
+	<input type="submit">
+ </form>
+ </body>
+</html>
