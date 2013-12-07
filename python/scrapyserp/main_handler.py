@@ -76,6 +76,7 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self):
         company_name=self.get_argument('companyname').strip()
         keywords = self.get_argument('keywords').strip()
+
         can=True
         if not company_name:
             self.write('company name cant empty')
@@ -85,8 +86,7 @@ class MainHandler(tornado.web.RequestHandler):
             self.write('keywords cant empty')
             can=False
 
-        keywords = keywords.split(',', 5)
-
+        keywords = re.split('\r\n|,', keywords, 5)
         if can:
             a=search_keywords_rank(company_name, keywords) #single execute
         else:
