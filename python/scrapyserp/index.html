@@ -1,37 +1,68 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
  <head>
-  <title> 阿里巴巴关键词排名查询工具 </title>
+  <meta charset="utf-8"/>
+  <title>Alibaba Keyword Ranking Query Online</title>
+  <meta name="Keywords" content="alibaba keyword,alibaba keyword ranking,alibaba keyword tool,阿里巴巴关键词排名,阿里巴巴关键词排名查询工具">
+  <meta name="Description" content="Alibaba keyword ranking query online. ">
+  <link href="/css/global.css" type="text/css" rel="stylesheet" />
+  <link href="/css/reg.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript">
+  <!--
+	function tj(){
+		document.getElementById("msg").style.display="";
+	}
+  //-->
+  </script>
  </head>
-
  <body>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39548865-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+ <div class="header">
+	<h1><a href="/" title="free b2b trade market">Free B2B Trade Market</a></h1>
+	<div class="header_right">
+		<div id="logininfo">
+				<a rel="nofollow" href="/login.php">Sign In</a>&nbsp; |&nbsp;<a rel="nofollow" href="/reg.php">Join Free</a>
+		</div>
+	</div>
+</div>
+
+<div class="main">
+ <p class="curb"><a href="/">Home</a> &gt; Alibaba Keyword Ranking Query Online</p>
+
  <form method="post" action="">
-	<h1>阿里巴巴关键词排名查询工具</h1>
-	<h3>提示：本工具只查询搜索页的前8页，搜索关键词最多5个（以逗号分隔）</h3>
+	<p id="msg" style="background-color: #F00;text-align: center;margin-top: 6px;margin-bottom: 10px;width: 200px;color: #FFF;padding: 4px;margin-left: auto;margin-right: auto;display:none;">Loading...</p>
+	<h3>tips：The tool only check page one to eight. Input search keywords separated by commas at most five. </h3>
 
-	<table>
+	<table style="margin-top:20px;">
 	<tr>
-		<td>公司阿里巴巴地址 :</td>	<td> <input type="text" name="companyname" id="companyname" / > 如 : xxxx.en.alibaba.com </td>
+		<td><strong>company url</strong> on alibaba.com :</td>
+		<td> <input type="text" name="companyname" id="companyname" style="width:320px;" / > eg : xxxx.en.alibaba.com </td>
 	</tr>
 	<tr>
-		<td colspan="2">要搜索的关键词 : </td>
+		<td style="vertical-align: top;"><strong>search keywords</strong><br/>separated by commas: </td>
+		<td>
+			<textarea type="text" name="keywords" id="keywords" style="width:320px;height:260px;"></textarea>			
+		</td>
+	</tr>
+	<tr>
 		<td></td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			<textarea type="text" name="keywords" id="keywords" style="width:240px;height:180px;"></textarea>  逗号分隔，最多5个词
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-
-		</td>
+		<td><input type="submit" value="submit" onclick="tj()" /></td>
 	</tr>
 	</table>
 
-	<table cellpadding=0 cellspacing=0 border=1 style='border-collapse:collapse;margin-top:20px;'>
+	<table cellpadding=0 cellspacing=0 border=1 style='border-collapse:collapse;margin-top:20px;width:100%;'>
 		<tr>
-			<th>关键字</th><th>产品</th><th>页码</th><th>页内排行</th><th>总排行</th><th>排名地址链接</th>
+			<th>Keyword</th><th>ProductName</th><th>Page Index</th><th>Page Ranking</th><th>Overall Ranking</th><th>Page Url</th>
 		</tr>
 		{% for k,v in books.iteritems() %}
 		<tr>
@@ -44,7 +75,11 @@
 		</tr>
 		{% end %}
 	</table>
-	<input type="submit">
  </form>
+ </div>
+<br/>
+<div class="footer">
+	<span>Copyright © 2013-<script>document.write(new Date().getFullYear());</script>2013	FreeB2BMarket.Com All Rights Reserved.</span>
+</div>
  </body>
 </html>

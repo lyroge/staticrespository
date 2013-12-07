@@ -24,9 +24,8 @@ import tornado.web
 from tornado import template
 import urllib 
 
-
-
 def search_keywords_rank(keyword_company_name, keywords):
+
     def get_context(url):
         start=clock()
         html=curl.get_html_body(url)
@@ -37,8 +36,8 @@ def search_keywords_rank(keyword_company_name, keywords):
         items = d("#J-items-content .ls-item")
         items_c = len(items)
         print items_c
-        if items_c < 38:
-            return get_context(url)
+        '''if  0 < items_c < 38:
+            return get_context(url)'''
         return items, items_c
 
     result = OrderedDict()
