@@ -26,7 +26,7 @@ class ProxyRobot(object):
     def get_random_proxy(self):
         if  self.i == self.j:
             self.i = 0
-            self.j = random.randint(1, 2)
+            self.j = random.randint(1, 200)
 
             #get proxy list from website again
             if (not self.proxies) or len(self.proxies) == 0:
@@ -38,7 +38,7 @@ class ProxyRobot(object):
         return self.proxy
 
     def handle_double_proxy(self, current_proxy):
-        if current_proxy in self.PROXY_ERROR_COUNT:
+        '''if current_proxy in self.PROXY_ERROR_COUNT:
             self.PROXY_ERROR_COUNT[current_proxy] = self.PROXY_ERROR_COUNT[current_proxy] + 1
 
             #remove 
@@ -51,15 +51,16 @@ class ProxyRobot(object):
                 if self.proxies:
                     self._update_proxy_list_to_file()
         else:
-            self.PROXY_ERROR_COUNT[current_proxy] = 1
+            self.PROXY_ERROR_COUNT[current_proxy] = 1'''
         
         #renew proxy 
         self.i = self.j = 0
         return None
 
     def handle_success_proxy(self, current_proxy):
-        if current_proxy in self.PROXY_ERROR_COUNT:
-            del self.PROXY_ERROR_COUNT[current_proxy]
+        pass
+        '''if current_proxy in self.PROXY_ERROR_COUNT:
+            del self.PROXY_ERROR_COUNT[current_proxy]'''
 
     def _get_proxy_from_file(self):
         if os.path.exists(self.PROXY_FILE):
@@ -91,7 +92,7 @@ class ProxyRobot(object):
                 ip = ''.join(tr.select('td[2]/text()').extract())
                 port = ''.join(tr.select('td[3]/text()').extract())
                 regions = ''.join(tr.select('td[4]/text()').extract())
-                if ip and port and regions == 'CN':
+                if ip and port:# and regions == 'US':
                     ip_port = '%s:%s' % (ip, port)
 
                     isok = self._test_proxy_ok_or_not(ip_port)
@@ -117,6 +118,7 @@ class ProxyRobot(object):
         return False
 
     def _update_proxy_list_to_file(self):
-        with open(self.PROXY_FILE, 'w+') as f:
+        pass
+        '''with open(self.PROXY_FILE, 'w+') as f:
             for proxy in self.proxies:
-                f.write(proxy + os.linesep)
+                f.write(proxy + os.linesep)'''

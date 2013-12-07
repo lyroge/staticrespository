@@ -6,7 +6,7 @@ keyword_company_name = 'Tianjin Wantex Import And Export Co., Ltd.'
 url = 'https://www.google.com.hk/search?hl=en&num=10&q=leg+warmers'
 url = 'http://www.alibaba.com/products/F0/%s/%s.html'
 
-import re,pytz
+import re,pytz,os
 tz=pytz.timezone('Asia/Chongqing')
 
 from collections import OrderedDict
@@ -25,19 +25,12 @@ from tornado import template
 import urllib 
 
 def search_keywords_rank(keyword_company_name, keywords):
-
     def get_context(url):
-        start=clock()
         html=curl.get_html_body(url)
-        finish=clock()
-        print url,(finish-start)
-
         d = pq(html)
         items = d("#J-items-content .ls-item")
         items_c = len(items)
-        print items_c
-        '''if  0 < items_c < 38:
-            return get_context(url)'''
+        print "[%d items] - %s" % (items_c, url)
         return items, items_c
 
     result = OrderedDict()
