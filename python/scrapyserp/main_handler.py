@@ -44,7 +44,7 @@ def search_keywords_rank(keyword_company_name, keywords):
         print "[%d items] - %s" % (items_c, url)
         return items, items_c
 
-    def get_result(result, url, page_index):
+    def get_result(result, u, page_index):
         items, items_c = get_context(u)
         b = False
         for item_index in range(0, items_c):
@@ -61,13 +61,15 @@ def search_keywords_rank(keyword_company_name, keywords):
                 print 'page %s, index %s, total index %s' % (page_index, item_index+1, total_index)
                 b = True
 
-                mylock.acquire()
                 if keyword not in result:
+                    mylock.acquire()
                     result[keyword] = (p_title, p_url, page_index, item_index+1, total_index, u)
+                    mylock.release()
                 else:
+                    mylock.acquire()
                     if result[keyword][2] > page_index or (result[keyword][2] == page_index and result[keyword][3] > item_index+1):
-                        result[keyword] = (p_title, p_url, page_index, item_index+1, total_index, u)                    
-                mylock.release()
+                        result[keyword] = (p_title, p_url, page_index, item_index+1, total_index, u)
+                    mylock.release()
                 break
 
     result = OrderedDict()
@@ -78,7 +80,6 @@ def search_keywords_rank(keyword_company_name, keywords):
             t = ResultThread(get_result, (result, u, page_index))
             t.start()
             threads.append(t)
-            time.sleep(0.01)
         for t in threads:
             t.join()
     return result
