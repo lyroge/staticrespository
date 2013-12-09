@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-keyword_company_name = 'Tianjin Wantex Import And Export Co., Ltd.'
-
-url = 'https://www.google.com.hk/search?hl=en&num=10&q=leg+warmers'
-url = 'http://www.alibaba.com/products/F0/%s/%s.html'
-
 import re,pytz,os,thread,time,threading
 tz=pytz.timezone('Asia/Chongqing')
 
@@ -17,7 +12,6 @@ from time import clock
 import MySQLdb.cursors
 curl = ProxyScrapy()
 from const.db import HOST,USER,PASSWD,DB
-
 
 import tornado.ioloop
 import tornado.web
@@ -34,6 +28,9 @@ class ResultThread(threading.Thread):
    
     def run(self):
         self.func(*self.args)
+
+
+URL_TEMPLATE = 'http://www.alibaba.com/products/F0/%s/%s.html'
 
 def search_keywords_rank(keyword_company_name, keywords):
     def get_context(url):
@@ -76,7 +73,7 @@ def search_keywords_rank(keyword_company_name, keywords):
     for keyword in keywords:
         threads = []
         for page_index in range(1,9):
-            u = url % (re.sub('\s+', '_', keyword.strip()), page_index)
+            u = URL_TEMPLATE % (re.sub('\s+', '_', keyword.strip()), page_index)
             t = ResultThread(get_result, (result, u, page_index))
             t.start()
             threads.append(t)
@@ -87,27 +84,30 @@ def search_keywords_rank(keyword_company_name, keywords):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('index.html', books={})
+        self.render('index.html', books={}, companyname='', keywords='')
 
     def post(self):
         company_name=self.get_argument('companyname').strip()
-        keywords = self.get_argument('keywords').strip()
+        kw=keywords = self.get_argument('keywords').strip()
 
-        can=True
-        if not company_name:
-            self.write('company name cant empty')
-            can=False
-        
-        if not keywords:
-            self.write('keywords cant empty')
-            can=False
-
-        keywords = re.split('\r\n|,', keywords, 5)
-        if can:
-            a=search_keywords_rank(company_name, keywords) #single execute
+        result = {}
+        if not company_name or not keywords:
+            self.write('company name or keywords can\'t empty')
         else:
-            a = {}
-        self.render('index.html', books=a)
+            keywords = re.split('\r\n|,', keywords)
+            keywords = [kw for kw in keywords if kw]
+            result=search_keywords_rank(company_name, keywords[:5]) #single execute
+
+            conn = MySQLdb.connect(host=HOST,user=USER,passwd=PASSWD,db=DB,cursorclass=MySQLdb.cursors.DictCursor)
+            conn.set_character_set('utf8')
+            cursor=conn.cursor()
+            cursor.execute('SET NAMES utf8;')
+            cursor.execute('SET CHARACTER SET utf8;')
+            cursor.execute('SET character_set_connection=utf8;')
+            cursor.executemany('insert into ali_keyword(name) values(%s)', result.keys())
+            cursor.close() 
+            conn.close()
+        self.render('index.html', books=result, companyname=company_name, keywords=kw)
 
 application = tornado.web.Application([
     (r"/keywordtool/", MainHandler),
