@@ -5,7 +5,6 @@ Date: 2013/12/10
 phantom.clearCookies();
 
 var URL = 'http://mall.hongxiu.com/';
-URL = 'http://pgl.yoyo.org/http/browser-headers.php';
 var TOTAL_TIME_I = 0.5*60; //30 seconds
 var TOTAL_TIME_J = 3.0*60; //180 seconds
 var TOTAL_TIME = 0;
@@ -111,8 +110,9 @@ page.open(innerUrl, function(status){
 					var count = 0;
 					while(true){
 						newurl = nodeList[random(0, nodeList.length-1)].getAttribute("href");
-						if(newurl.indexOf("http://")==0 || newurl[0] == "/")
+						if(newurl.indexOf("http://")==0 || newurl[0] == "/"){
 							break;
+						}
 					}
 					if (newurl[0] == "/")
 						newurl = "http://" + document.domain + newurl;
