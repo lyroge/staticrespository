@@ -68,9 +68,14 @@ var USER_AGENT_LIST = ['Mozilla/6.0 (Windows NT 6.2; WOW64; rv:16.0.1) Gecko/201
 'Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)',
 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; TencentTraveler 4.0; Trident/4.0; SLCC1; Media Center PC 5.0; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30618)',
 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Maxthon/3.0)']
+
+var ua = USER_AGENT_LIST[random(0, USER_AGENT_LIST.length-1)];
+
+var referer = "http://www.google.com.hk/#newwindow=1&q=free+b2b&safe=strict&start=90";
 page.customHeaders = {
-  "User-Agent": USER_AGENT_LIST[random(0, USER_AGENT_LIST.length-1)],
-  "Accept-Language": "en-US,en;q=0.8"
+  "User-Agent": ua,
+  "Accept-Language": "en-US,en;q=0.8",
+  "Referer": referer
 };
 
 page.onConsoleMessage = function(msg) {
@@ -88,14 +93,20 @@ console.log(TOTAL_TIME);
 
 page.open(innerUrl, function(status){
 	console.log('open url:' + innerUrl);
-	
+	referer = innerUrl;
 	var c = 0;
 	var end = random(0, 6);
 	for (var ix=0; ix<end; ix++)
 	{
 		setTimeout(function(){
 			c = c + 1;
+			page.customHeaders = {
+			  "User-Agent": ua,
+			  "Accept-Language": "en-US,en;q=0.8",
+			  "Referer": referer
+			};
 			page.open(innerUrl, function(status){
+				referer = innerUrl;
 				console.log('open url:' + innerUrl);
 				page.render(z+'.png')
 				z += x;
@@ -120,6 +131,9 @@ page.open(innerUrl, function(status){
 				});
 
 				if (c == end){
+					page.evaluate(function(){
+						window.close();
+					});
 					console.log('exit');
 					page.close();
 					phantom.exit();
@@ -132,6 +146,9 @@ page.open(innerUrl, function(status){
 	page.render('home.png')
 
 	if (end == 0){
+		page.evaluate(function(){
+			window.close();
+		});
 		page.close();
 		phantom.exit();
 	}
