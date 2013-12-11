@@ -118,18 +118,24 @@ page.open(innerUrl, function(status){
 
 					var nodeList = document.getElementsByTagName("a");
 					var newurl = "";
+					if(nodeList.length==0)
+						return newurl;
 					while(true){
 						newurl = nodeList[random(0, nodeList.length-1)].getAttribute("href");
-						if(newurl.indexOf("http://")==0 || newurl[0] == "/"){
+						if(newurl.indexOf('javascript') == -1){//newurl.indexOf("http://")==0 || newurl[0] == "/"){
 							break;
 						}
 					}
 					if (newurl[0] == "/")
 						newurl = "http://" + document.domain + newurl;
+					else{
+						var i =document.URL.lastIndexOf('/')
+						newurl = document.URL.substring(0,i+1) + newurl;
+					}
 					return newurl;
 				});
 
-				if (c == end){
+				if (c == end || innerUrl==""){
 					page.evaluate(function(){
 						window.close();
 					});
@@ -148,6 +154,7 @@ page.open(innerUrl, function(status){
 		page.evaluate(function(){
 			window.close();
 		});
+		console.log('exit');
 		page.close();
 		phantom.exit();
 	}
@@ -161,12 +168,16 @@ page.open(innerUrl, function(status){
 		var newurl = "";
 		while(true){
 			newurl = nodeList[random(0, nodeList.length-1)].getAttribute("href");
-			if(newurl.indexOf("http://")==0 || newurl[0] == "/"){
+			if(newurl.indexOf('javascript') == -1){
 				break;
 			}
 		}
 		if (newurl[0] == "/")
 			newurl = "http://" + document.domain + newurl;
+		else{
+			var i =document.URL.lastIndexOf('/')
+			newurl = document.URL.substring(0,i+1) + newurl;
+		}
 		return newurl;
 	});
 });
