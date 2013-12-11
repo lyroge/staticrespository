@@ -128,7 +128,7 @@ page.open(innerUrl, function(status){
 					}
 					if (newurl[0] == "/")
 						newurl = "http://" + document.domain + newurl;
-					else{
+					else if (newurl.indexOf("http://")!=0){
 						var i =document.URL.lastIndexOf('/')
 						newurl = document.URL.substring(0,i+1) + newurl;
 					}
@@ -174,7 +174,7 @@ page.open(innerUrl, function(status){
 		}
 		if (newurl[0] == "/")
 			newurl = "http://" + document.domain + newurl;
-		else{
+		else if (newurl.indexOf("http://")!=0){
 			var i =document.URL.lastIndexOf('/')
 			newurl = document.URL.substring(0,i+1) + newurl;
 		}
