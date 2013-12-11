@@ -91,8 +91,8 @@ var innerUrl = URL;
 
 console.log(TOTAL_TIME);
 
+console.log('open url:' + innerUrl);
 page.open(innerUrl, function(status){
-	console.log('open url:' + innerUrl);
 	referer = innerUrl;
 	var c = 0;
 	var end = random(0, 6);
@@ -105,9 +105,9 @@ page.open(innerUrl, function(status){
 			  "Accept-Language": "en-US,en;q=0.8",
 			  "Referer": referer
 			};
+			console.log('open url:' + innerUrl);
 			page.open(innerUrl, function(status){
 				referer = innerUrl;
-				console.log('open url:' + innerUrl);
 				page.render(z+'.png')
 				z += x;
 
@@ -118,7 +118,6 @@ page.open(innerUrl, function(status){
 
 					var nodeList = document.getElementsByTagName("a");
 					var newurl = "";
-					var count = 0;
 					while(true){
 						newurl = nodeList[random(0, nodeList.length-1)].getAttribute("href");
 						if(newurl.indexOf("http://")==0 || newurl[0] == "/"){
@@ -159,6 +158,15 @@ page.open(innerUrl, function(status){
 		}
 
 		var nodeList = document.getElementsByTagName("a");
-		return nodeList[random(0, nodeList.length-1)].getAttribute("href");
+		var newurl = "";
+		while(true){
+			newurl = nodeList[random(0, nodeList.length-1)].getAttribute("href");
+			if(newurl.indexOf("http://")==0 || newurl[0] == "/"){
+				break;
+			}
+		}
+		if (newurl[0] == "/")
+			newurl = "http://" + document.domain + newurl;
+		return newurl;
 	});
 });
