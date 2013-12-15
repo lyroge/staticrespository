@@ -91,8 +91,8 @@ var innerUrl = URL;
 
 console.log(TOTAL_TIME);
 
+console.log('open url:' + innerUrl);
 page.open(innerUrl, function(status){
-	console.log('open url:' + innerUrl);
 	referer = innerUrl;
 	var c = 0;
 	var end = random(0, 6);
@@ -105,9 +105,9 @@ page.open(innerUrl, function(status){
 			  "Accept-Language": "en-US,en;q=0.8",
 			  "Referer": referer
 			};
+			console.log('open url:' + innerUrl);
 			page.open(innerUrl, function(status){
 				referer = innerUrl;
-				console.log('open url:' + innerUrl);
 				page.render(z+'.png')
 				z += x;
 
@@ -118,19 +118,24 @@ page.open(innerUrl, function(status){
 
 					var nodeList = document.getElementsByTagName("a");
 					var newurl = "";
-					var count = 0;
+					if(nodeList.length==0)
+						return newurl;
 					while(true){
 						newurl = nodeList[random(0, nodeList.length-1)].getAttribute("href");
-						if(newurl.indexOf("http://")==0 || newurl[0] == "/"){
+						if(newurl.indexOf('javascript') == -1){//newurl.indexOf("http://")==0 || newurl[0] == "/"){
 							break;
 						}
 					}
 					if (newurl[0] == "/")
 						newurl = "http://" + document.domain + newurl;
+					else if (newurl.indexOf("http://")!=0){
+						var i =document.URL.lastIndexOf('/')
+						newurl = document.URL.substring(0,i+1) + newurl;
+					}
 					return newurl;
 				});
 
-				if (c == end){
+				if (c == end || innerUrl==""){
 					page.evaluate(function(){
 						window.close();
 					});
@@ -149,6 +154,7 @@ page.open(innerUrl, function(status){
 		page.evaluate(function(){
 			window.close();
 		});
+		console.log('exit');
 		page.close();
 		phantom.exit();
 	}
@@ -159,6 +165,19 @@ page.open(innerUrl, function(status){
 		}
 
 		var nodeList = document.getElementsByTagName("a");
-		return nodeList[random(0, nodeList.length-1)].getAttribute("href");
+		var newurl = "";
+		while(true){
+			newurl = nodeList[random(0, nodeList.length-1)].getAttribute("href");
+			if(newurl.indexOf('javascript') == -1){
+				break;
+			}
+		}
+		if (newurl[0] == "/")
+			newurl = "http://" + document.domain + newurl;
+		else if (newurl.indexOf("http://")!=0){
+			var i =document.URL.lastIndexOf('/')
+			newurl = document.URL.substring(0,i+1) + newurl;
+		}
+		return newurl;
 	});
 });
