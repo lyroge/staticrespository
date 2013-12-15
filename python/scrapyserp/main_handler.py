@@ -104,7 +104,10 @@ class MainHandler(tornado.web.RequestHandler):
             cursor.execute('SET NAMES utf8;')
             cursor.execute('SET CHARACTER SET utf8;')
             cursor.execute('SET character_set_connection=utf8;')
-            cursor.executemany('insert into ali_keyword(name) values(%s)', result.keys())
+
+            keys = result.keys()
+            values = [company_name for v in keys]
+            cursor.executemany('insert into ali_keyword(name,companyurl) values(%s,%s)', zip(keys,values))
             cursor.close() 
             conn.close()
         self.render('index.html', books=result, companyname=company_name, keywords=kw)
