@@ -7,9 +7,12 @@ from email.MIMEText import MIMEText
 from email.MIMEImage import MIMEImage
 
 def send_email(to, title):
+	username = 'freeb2bmarket@gmail.com'
+	password = '***'
+
 	msgRoot = MIMEMultipart('related')
 	msgRoot['Subject'] = title
-	msgRoot['From'] = 'freeb2bmarket@gmail.com'
+	msgRoot['From'] = username
 	msgRoot['To'] = to
 	msgRoot.preamble = 'This is a multi-part message in MIME format.'
 
@@ -32,12 +35,11 @@ def send_email(to, title):
 	  ])
 	'''
 
-	username = 'freeb2bmarket@gmail.com'
-	password = '***'
-
 	server = smtplib.SMTP('smtp.gmail.com:587')
 	server.starttls()
 	server.login(username,password)
 
-	server.sendmail(fromaddr, toaddrs, msgRoot.as_string())
+	server.sendmail(username, to, msgRoot.as_string())
 	server.quit()
+
+send_email('abc@lal.com, 'test email')
