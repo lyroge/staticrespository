@@ -5,6 +5,7 @@ Date: 2013/12/10
 phantom.clearCookies();
 
 var URL = 'http://www.bing.com/search?q=freeb2bmarket.com&go=&qs=n&form=QBLH&pq=freeb2bmarket.com';
+URL = 'http://pgl.yoyo.org/http/browser-headers.php'
 var referer = "http://www.bing.com";
 
 var TOTAL_TIME_I = 0.5*60; //30 seconds
