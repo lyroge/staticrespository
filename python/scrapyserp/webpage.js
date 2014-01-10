@@ -4,7 +4,9 @@ Date: 2013/12/10
 
 phantom.clearCookies();
 
-var URL = 'http://mall.hongxiu.com/';
+var URL = 'http://www.bing.com/search?q=freeb2bmarket.com&go=&qs=n&form=QBLH&pq=freeb2bmarket.com';
+var referer = "http://www.bing.com";
+
 var TOTAL_TIME_I = 0.5*60; //30 seconds
 var TOTAL_TIME_J = 3.0*60; //180 seconds
 var TOTAL_TIME = 0;
@@ -67,14 +69,23 @@ var USER_AGENT_LIST = ['Mozilla/6.0 (Windows NT 6.2; WOW64; rv:16.0.1) Gecko/201
 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; GTB7.4; InfoPath.2; SV1; .NET CLR 3.3.69573; WOW64; en-US)',
 'Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)',
 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; TencentTraveler 4.0; Trident/4.0; SLCC1; Media Center PC 5.0; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30618)',
-'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Maxthon/3.0)']
-
+'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; Maxthon/3.0)',
+'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17',
+'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36',
+'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.9 Safari/536.5',
+'Mozilla/5.0 (compatible; MSIE 10.6; Windows NT 6.1; Trident/5.0; InfoPath.2; SLCC1; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET CLR 2.0.50727) 3gpp-gba UNTRUSTED/1.0',
+'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
+'Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))',
+'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; InfoPath.1; SV1; .NET CLR 3.8.36217; WOW64; en-US)']
 var ua = USER_AGENT_LIST[random(0, USER_AGENT_LIST.length-1)];
 
-var referer = "http://www.google.com.hk/#newwindow=1&q=free+b2b&safe=strict&start=90";
+var ACCEPT_LANGUAGE = ['zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3',
+'en-US,en;q=0.8'];
+var al = ACCEPT_LANGUAGE[random(0, ACCEPT_LANGUAGE.length-1)];
+
 page.customHeaders = {
   "User-Agent": ua,
-  "Accept-Language": "en-US,en;q=0.8",
+  "Accept-Language": al,
   "Referer": referer
 };
 
@@ -95,14 +106,14 @@ console.log('open url:' + innerUrl);
 page.open(innerUrl, function(status){
 	referer = innerUrl;
 	var c = 0;
-	var end = random(0, 6);
+	var end = random(0, 3);  // how many url open
 	for (var ix=0; ix<end; ix++)
 	{
 		setTimeout(function(){
 			c = c + 1;
 			page.customHeaders = {
 			  "User-Agent": ua,
-			  "Accept-Language": "en-US,en;q=0.8",
+			  "Accept-Language": al,
 			  "Referer": referer
 			};
 			console.log('open url:' + innerUrl);
