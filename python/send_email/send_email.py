@@ -26,8 +26,8 @@ def send_email(to, title, content):
 	msgText = MIMEText(msg.replace('{{content}}', content), 'html')
 	msgAlternative.attach(msgText)
 
-	username = 'freeb2bmarket@gmail.com'
-	password = 'fbm61902279'
+	username = EMAIL_USERNAME
+	password = EMAIL_PASSWORD
 
 	server = smtplib.SMTP('smtp.gmail.com:587')
 	server.starttls()
