@@ -8,26 +8,16 @@ from settings import CONSUMER_KEY,CONSUMER_SECRET,USER_TOKEN,USER_SECRET,RETURN_
 authentication = linkedin.LinkedInDeveloperAuthentication(CONSUMER_KEY, CONSUMER_SECRET,USER_TOKEN, USER_SECRET,RETURN_URL, linkedin.PERMISSIONS.enums.values())
 application = linkedin.LinkedInApplication(authentication)
 
-#print dir(application)#.get_profile()
 
 groups = [(a['group']['id'],a['group']['name']) for a in application.get_memberships(params={'count':'1000'})['values']]
 
-#groups = [(6589270,'test group')]
-#group = random.choice(groups)
+group = random.choice(groups)
+group = (6589270,'test group')
 
-i = 1
-for group in groups:
-    groupid = group[0]
-    print i
+groupid = group[0]
 
-    #post a group discuss
-    title = ''
-    summary = ''
+posts = application.get_posts(groupid,params={'count':'10000'})['values']
+posts_id = [p['id'] for p in posts]
 
-    submitted_url = ''
-    submitted_image_url = ''
-    description = ''
 
-    time.sleep(2)
-    application.submit_group_post(groupid, title, summary, submitted_url, submitted_image_url, '', summary)
-    i = i + 1
+print posts_id

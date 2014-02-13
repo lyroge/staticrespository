@@ -10,24 +10,7 @@ application = linkedin.LinkedInApplication(authentication)
 
 #print dir(application)#.get_profile()
 
-groups = [(a['group']['id'],a['group']['name']) for a in application.get_memberships(params={'count':'1000'})['values']]
-
 #groups = [(6589270,'test group')]
 #group = random.choice(groups)
 
-i = 1
-for group in groups:
-    groupid = group[0]
-    print i
-
-    #post a group discuss
-    title = ''
-    summary = ''
-
-    submitted_url = ''
-    submitted_image_url = ''
-    description = ''
-
-    time.sleep(2)
-    application.submit_group_post(groupid, title, summary, submitted_url, submitted_image_url, '', summary)
-    i = i + 1
+print application.get_posts(2401842)
