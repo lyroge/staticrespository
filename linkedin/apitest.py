@@ -13,4 +13,8 @@ application = linkedin.LinkedInApplication(authentication)
 #groups = [(6589270,'test group')]
 #group = random.choice(groups)
 
-print application.get_posts(2401842)
+posts = application.get_posts(6589270,params={'count':'10000'})['values']
+posts_id = [p['id'] for p in posts]
+
+postid = posts_id[1]
+application.like_post(postid)
