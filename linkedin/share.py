@@ -12,7 +12,7 @@ application = linkedin.LinkedInApplication(authentication)
 
 groups = [(a['group']['id'],a['group']['name']) for a in application.get_memberships(params={'count':'1000'})['values']]
 
-#groups = [(6589270,'test group')]
+groups = [(115178,'test group')]
 #group = random.choice(groups)
 
 i = 1
@@ -21,13 +21,13 @@ for group in groups:
     print i
 
     #post a group discuss
-    title = ''
-    summary = ''
+    title = 'Looking for BUYERS about T-shirts Polo Shirts Tank-Tops'
+    summary = 'We are the manufacturer of Shirts, main products :T-shirts, Polo Shirts, Tank-Tops'
 
-    submitted_url = ''
-    submitted_image_url = ''
-    description = ''
+    submitted_url = 'http://www.freeb2bmarket.com/company/brand-tex-corporation-bangladesh.html'
+    submitted_image_url = 'http://www.freeb2bmarket.com/upload/2014_02_12_05_22_40_02.png'
+    description = 'Looking for BUYERS about T-shirts, Polo Shirts, Tank-Tops. We make Shirt, Jeans, Coverall, Bottoms and Jackets, Trouser in all kind of materials.'
 
     time.sleep(2)
-    application.submit_group_post(groupid, title, summary, submitted_url, submitted_image_url, '', summary)
+    application.submit_group_post(groupid, title, summary, submitted_url, submitted_image_url, 'BRAND TEX Corporation Bangladesh', summary)
     i = i + 1
