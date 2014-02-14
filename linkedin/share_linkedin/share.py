@@ -20,11 +20,12 @@ class LoginHandler(tornado.web.RequestHandler):
 
 class ShareHandler(tornado.web.RequestHandler):
 	def get(self):
-		capters = {}
+		global authentication
 		code = self.get_argument('code')
 
-		authentication.authorization_code = code
-		authentication.get_access_token()
+		if not authentication.authorization_code:
+			authentication.authorization_code = code
+			authentication.get_access_token()
 
 		groups = [(a['group']['id'],a['group']['name']) for a in app.get_memberships(params={'count':'1000'})['values']]
 		self.render('index.html', groups=groups)
