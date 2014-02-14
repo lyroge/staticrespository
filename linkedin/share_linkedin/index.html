@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> share to linkedin group </title>
+ </head>
+
+ <body>
+ <form method="post">
+	<table cellpadding=0 cellspacing=0 border=1 style='border-collapse:collapse;'>
+		<tr>
+			<td>Discussion Title:</td><td><input type="text" name="dtitle" /></td>
+		</tr>
+		<tr>
+			<td>Discussion Summary:</td><td><input type="text" name="summary" /></td>
+		</tr>
+		<tr>
+			<td>Submitted Url:</td><td><input type="text" name="url" /></td>
+		</tr>
+		<tr>
+			<td>Submitted Image Url:</td><td><input type="text" name="imageurl" /></td>
+		</tr>
+		<tr>
+			<td>Content Title:</td><td><input type="text" name="ctitle" /></td>
+		</tr>
+		<tr>
+			<td>Content Description:</td><td><input type="text" name="desc" /></td>
+		</tr>
+		<tr>
+			<td>Share To Group(multiple options):</td>
+			<td>
+				<select name="groupids" multiple="multiple" style="min-height:200px">
+				{% for g in groups %}
+					<option value="{{g[0]}}">{{g[1]}}</option>
+				{% end %}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2><input type="submit"></td>
+		</tr>
+	</table>
+</form>
+ </body>
+</html>
