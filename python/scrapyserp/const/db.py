@@ -1,4 +1,4 @@
 HOST="127.0.0.1"
 USER="root"
 PASSWD="abc"
-DB="freeb2b"
+DB="fbm"

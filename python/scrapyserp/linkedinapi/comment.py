@@ -12,7 +12,7 @@ groups = [(a['group']['id'],a['group']['name']) for a in application.get_members
 
 while True:
     group = random.choice(groups)
-    group = (6589270,'test group')
+    #group = (6589270,'test group')
     print group
 
     #get all posts
