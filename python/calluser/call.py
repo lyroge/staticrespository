@@ -14,6 +14,7 @@ for r in result:
 	email = r['email']
 	title = '%s Product details required' % person
 	send_email(email, title, person, url)
+	print r['name']
 	time.sleep(random.choice([1,3,5,7]))
 cursor.close() 
 conn.close()

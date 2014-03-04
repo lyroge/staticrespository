@@ -22,7 +22,6 @@ def send_email(to, title, *holdplace):
 	f=open('email.txt', 'r')
 	msg = f.read()
 	f.close()
-	print holdplace
 	msg = msg % holdplace
 	msgText = MIMEText(msg, 'html')
 	msgAlternative.attach(msgText)
