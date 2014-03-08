@@ -12,11 +12,13 @@ from time import clock
 import MySQLdb.cursors
 curl = ProxyScrapy()
 from const.db import HOST,USER,PASSWD,DB
-
 import tornado.ioloop
 import tornado.web
 from tornado import template
+from pyquery import PyQuery as pq
 import urllib 
+from linkedin import linkedin
+from linkedinapi.share_web import LoginHandler, ShareHandler
 
 mylock = thread.allocate_lock()
 
@@ -112,8 +114,11 @@ class MainHandler(tornado.web.RequestHandler):
             conn.close()
         self.render('index.html', books=result, companyname=company_name, keywords=kw)
 
+
 application = tornado.web.Application([
     (r"/keywordtool/", MainHandler),
+	(r"/login", LoginHandler),
+	(r"/share", ShareHandler),
 ])
 
 if __name__ == "__main__":

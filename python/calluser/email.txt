@@ -1,0 +1,29 @@
+<div>
+    <div>
+        Dear %s,
+    </div>
+    <div> <br> </div>
+    <div>
+        Your company home page at http://www.freeb2bmarket.com is : %s
+    </div>
+    <div> <br> </div>
+    <div>
+        You can
+    </div>
+    <div>
+        1. Post your products or trade leads at  http://www.freeb2bmarket.com,  that can make more people known your company.
+    </div>
+    <div>
+        2. Find trade leads here. &nbsp;
+    </div>
+    <div>
+        Welcome to http://www.freeb2bmarket.com/. &nbsp;100 free absolutely !!! &nbsp;unlimited &nbsp;number of submissions
+    </div>
+    <div> <br>    </div>
+    <div>
+        Best Regards.
+    </div>
+    <div> <br> </div>
+</div>
+
+<div><br></div><div><br></div><div><sign signid="1" nreadytime="1393899106116"><div style="color:#909090;font-family:Arial Narrow;font-size:12px">------------------</div><div style="font-size:14px;font-family:Verdana;color:#000;"><div><div><font face="Arial, Helvetica, sans-serif" size="4"><span style="line-height: 18px;"><b>Contact Us:</b></span></font></div><div><font face="Arial, Helvetica, sans-serif"><span style="font-size: 12px; line-height: 18px;"><b><br></b></span></font></div><div><font face="Arial, Helvetica, sans-serif"><span style="font-size: 12px; line-height: 18px;"><b>Website£ºhttp://www.freeb2bmarket.com</b></span></font></div><div><font face="Arial, Helvetica, sans-serif"><span style="font-size: 12px; line-height: 18px;"><b>Email£º &nbsp; &nbsp;&nbsp;freeb2bmarket@gmail.com</b></span></font></div><div><font face="Arial, Helvetica, sans-serif"><span style="font-size: 12px; line-height: 18px;"><b><br></b></span></font></div><div><font face="Arial, Helvetica, sans-serif"><span style="font-size: 12px; line-height: 18px;"><b>A Online B2B TradeMarketplace, Find Suppliers, Manufacturers, Exporters &amp;amp;Importers from the world</b></span></font></div></div><div><font face="Arial, Helvetica, sans-serif"><span style="font-size: 12px; line-height: 18px;"><b><br></b></span></font></div><div><a href="http://www.freeb2bmarket.com/"><img src="http://www.freeb2bmarket.com/img/newyearlogo.gif"></a></div></div></sign></div>
