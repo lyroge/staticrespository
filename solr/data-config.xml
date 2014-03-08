@@ -1,0 +1,52 @@
+<dataConfig>
+  <dataSource type="JdbcDataSource" 
+              driver="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/fbm" 
+              user="root" 
+              password="abc"/>
+  <document>
+    <!-- <entity name="product"
+            query="select id, name, price, port, miniorder, supplyability, supplyability, paymentterm, quickdetail,producttype, parentproducttype from product limit 10000">
+       <field column="id" name="productid"/>
+       <field column="name" name="productname"/>
+       <field column="price" name="price"/>
+       <field column="port" name="port"/>
+       <field column="miniorder" name="miniorder"/>
+       <field column="supplyability" name="supplyability"/>
+       <field column="paymentterm" name="paymentterm"/>
+       <field column="quickdetail" name="quickdetail"/>
+       <field column="producttype" name="producttypeid"/>
+       <field column="parentproducttype" name="parentproducttypeid"/>
+
+       <entity name="producttype"
+               query="select name from producttype where id ='${product.producttype}'">
+              <field column="name" name="producttype"/>
+       </entity>
+
+       <entity name="producttype"
+               query="select name from producttype where id ='${product.parentproducttype}'">
+              <field column="name" name="parentproducttype"/>
+       </entity>
+
+       <entity name="company"
+               query="select id, name, contactperpon, location, businesstype, mainproduct, introduction from company where id ='${product.companyid}'">
+              <field column="id" name="companyid"/>
+              <field column="name" name="companyname"/>
+              <field column="contactperpon" name="contactperpon"/>
+              <field column="location" name="location"/>
+              <field column="businesstype" name="businesstype"/>
+              <field column="mainproduct" name="mainproduct"/>
+              <field column="introduction" name="introduction"/>
+       </entity>
+    </entity> -->
+
+
+<entity name="product"
+            query="select
+            p.id as productid, p.name as productname,
+            pt.name as producttype, pt.ParentName as parentproducttype,
+            c.location from product p join producttype pt on p.producttype=pt.id join company c on p.companyid = c.id
+             WHERE '${dataimporter.request.clean}' != 'false' OR p.addtime > '${dataimporter.last_index_time}' limit 600000">
+    </entity>
+  </document>
+</dataConfig>
