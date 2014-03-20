@@ -1,0 +1,50 @@
+1. r"string" 
+	
+	r开头的正则串把反斜杠做正常字符处理
+
+2. Matching vs Searching
+
+	Matching仅匹配第一个匹配的字符串 或者多行模式下新行的开头
+	Searching匹配所有匹配的字符串
+	都返回MatchObject对象
+
+
+3. re对象
+
+	prog = re.compile(pattern, flags=0)	这种形式效率更高 flags是一些标志位，如忽略大小写等re.I
+	result = prog.match(string)
+
+	等价于
+
+	result = re.match(pattern, string)
+
+
+4. 常用方法
+
+	正则拆分，返回数组
+	re.split(pattern, string, maxsplit=0, flags=0) 
+
+
+	发现所有匹配的元素，返回一个数组;
+	re.findall(pattern, string, flags=0)	
+
+		如果有多个组，每个数组元素是一个元组 值为每个组匹配的值，如：	
+		re.findall('(([a-z]+)?([0-9]+))', "askf23skdf223skdfj32")	结果：[('askf23', 'askf', '23'), ('skdf223', 'skdf', '223'), ('skdfj32', 'skdfj', '32')]
+
+
+	发现所有匹配的元素，返回一个iterator的MatchObject对象
+	re.finditer(pattern, string, flags=0) 
+	
+		
+	正则替换
+	re.sub(pattern, repl, string, count=0, flags=0) 
+
+
+
+
+MatchObject对象方法
+
+
+	获取匹配对象的组信息
+	match.group(1) 等
+	
