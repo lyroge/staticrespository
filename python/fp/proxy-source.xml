@@ -83,7 +83,7 @@
 		<url>http://www.proxylist.ro/</url>
 	</item>
 	<item  startpage=1 endpage=9>
-		<url>http://letushide.com/protocol/http/1/list_of_free_HTTP_proxy_servers</url>
+		<url>http://letushide.com/protocol/http/%s/list_of_free_HTTP_proxy_servers</url>
 		<table_xpath>//*[@id="basic"]//tr[position()>1]</table_xpath>
 		<ip_xpath>td[2]/a/text()</ip_xpath>
 		<port_xpath>td[3]/text()</port_xpath>	
