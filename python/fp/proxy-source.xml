@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<data>
+	<item enablejs=true>
+		<url>http://www.proxynova.com/proxy-server-list/country-hk/,http://www.proxynova.com/proxy-server-list/country-ar/,http://www.proxynova.com/proxy-server-list/country-id/,http://www.proxynova.com/proxy-server-list/,http://www.proxynova.com/proxy-server-list/country-cn/,http://www.proxynova.com/proxy-server-list/country-th/,http://www.proxynova.com/proxy-server-list/country-us/,http://www.proxynova.com/proxy-server-list/country-jp/,http://www.proxynova.com/proxy-server-list/country-ru/</url>
+		<table_xpath>//*[@id="tbl_proxy_list"]/tbody[1]/tr</table_xpath>
+		<ip_xpath>td[1]</ip_xpath>
+		<port_xpath>td[2]</port_xpath>
+	</item>
+
+	<!-- CN Start -->
+	<item startpage=1 endpage=8>
+		<url>http://proxy.com.ru/list_%s.html</url>
+	</item>
+	<item>
+		<url>http://ip-daili.com/view/?id=977</url>
+	</item>
+	<item>
+		<url>http://www.ipdizhi.com/</url>
+	</item>
+	<item>
+		<url>http://www.youdaili.cn/Daili/guowai/1855.html</url>
+	</item>
+	<item startpage=2 endpage=3>
+		<url>http://www.youdaili.cn/Daili/guowai/1855_%s.html</url>
+	</item>
+	<item>
+		<url>http://pachong.org/</url>
+	</item>
+	<item>
+		<url>http://pachong.org/anonymous.html</url>
+	</item>
+	<item>
+		<url>http://pachong.org/transparent.html</url>
+	</item>
+	<item>
+		<url>http://httproxy.duapp.com/</url>
+	</item>
+	<item startpage=1 endpage=4>
+		<url>http://freedaili.net/?country=no&isp=&province=&city=&page=%s</url>
+	</item>
+	<item startpage=1 endpage=9>
+		<url>http://freedaili.net/?country=中国&isp=&province=&city=&page=%s</url>
+	</item>
+	<item data="dd=niming&23=%E5%8C%BF%E5%90%8D%E4%BB%A3%E7%90%86">
+		<url>http://code.76lt.com/daili/</url>
+	</item>
+	<item data="dd=feiniming&22=%E9%9D%9E%E5%8C%BF%E5%90%8D%E4%BB%A3%E7%90%86">
+		<url>http://code.76lt.com/daili/</url>
+	</item>
+	<!-- CN End -->
+
+	<item startpage=1 endpage=9 enablejs=true>
+		<url>http://proxyhttp.net/free-list/anonymous-server-hide-ip-address/%s</url>
+	</item>	
+	<item>
+		<url>http://free-proxy-list.net/</url>
+	</item>
+	<item>
+		<url>http://spys.ru/</url>
+	</item>
+	<item  startpage=1 endpage=10 enablejs=true>
+		<url>http://tools.rosinstrument.com/raw_free_db.htm?%s</url>
+	</item>
+	<item  startpage=1 endpage=10 enablejs=true>
+		<url>http://www.samair.ru/proxy/proxy-%s.htm</url>
+	</item>
+	<item>
+		<url>http://www.ip-adress.com/proxy_list/?k=time&d=desc</url>
+	</item>
+	<item enablejs=true startpage=1 endpage=3>
+		<url>http://www.cool-proxy.net/proxies/http_proxy_list/sort:score/direction:desc/page:%s</url>
+	</item>
+	<item>
+		<url>http://www.proxz.com/proxy_list_high_anonymous_0.html</url>
+	</item>
+	<item  startpage=1 endpage=3>
+		<url>https://nordvpn.com/free-proxy-list/%s/</url>
+	</item>
+	<item>
+		<url>http://freeproxylist.co/free-proxy-list-for-2014-03-21/</url>
+	</item>
+	<item>
+		<url>http://www.proxylist.ro/</url>
+	</item>
+	<item  startpage=1 endpage=9>
+		<url>http://letushide.com/protocol/http/1/list_of_free_HTTP_proxy_servers</url>
+		<table_xpath>//*[@id="basic"]//tr[position()>1]</table_xpath>
+		<ip_xpath>td[2]/a/text()</ip_xpath>
+		<port_xpath>td[3]/text()</port_xpath>	
+	</item>
+</data>
