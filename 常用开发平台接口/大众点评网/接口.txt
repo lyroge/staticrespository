@@ -1,0 +1,6 @@
+搜索商户
+请求地址：http://developer.dianping.com/app/api/v1/business/find_businesses
+常用参数：city=北京&region=平谷&sort=3&limit=10&keyword=饭店
+
+
+
