@@ -4,6 +4,7 @@ import MySQLdb, MySQLdb.cursors
 from const.db import HOST,USER,PASSWD,DB
 import random, time, datetime
 
+#打开数据库
 conn = MySQLdb.connect(host=HOST,user=USER,passwd=PASSWD,db=DB,cursorclass=MySQLdb.cursors.DictCursor)
 conn.set_character_set('utf8')
 cursor=conn.cursor()
@@ -43,7 +44,9 @@ def post(subject, content, fid, authorid, author, posttime):
 	cursor.execute('update pre_common_member_count set posts=posts+1, threads=threads+1 where uid=%s', (authorid,))
 	print 'done'
 
+#自动发帖逻辑部分
 post("测试帖子", "测试帖子内容", 69, 12, "资讯小编", "")
 
+#关闭数据库
 cursor.close() 
 conn.close()
