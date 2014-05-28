@@ -26,7 +26,7 @@ class ZixunSpider(CrawlSpider):
 
     rules = (
         #Rule(SgmlLinkExtractor(unique=True,allow=("\?page=1"))),
-        Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=207628', )), callback='parse_item')
+        Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=207641', )), callback='parse_item')
     ,)
 
     def __del__(self):
@@ -61,7 +61,7 @@ class ZixunSpider(CrawlSpider):
 
         #更新论坛版块内容 pre_forum_forum
         lastpost = '%s  %s  %s  %s' % (tid, subject, unixtime, author)
-        self.cursor.execute('update pre_forum_forum set posts=posts+1, todayposts=todayposts+1, lastpost=%s where fid=%s', (lastpost,fid))
+        self.cursor.execute('update pre_forum_forum set threads = threads + 1, posts=posts+1, todayposts=todayposts+1, lastpost=%s where fid=%s', (lastpost,fid))
 
         #更新用户统计数据 pre_common_member_count
         self.cursor.execute('update pre_common_member_count set posts=posts+1, threads=threads+1 where uid=%s', (authorid,))
@@ -71,9 +71,9 @@ class ZixunSpider(CrawlSpider):
         hxs = HtmlXPathSelector(response)
 
         uid = 2
-        fid = 39
-        title = ''.join(hxs.select('/html/body/table[3]/tr/td[2]/table[3]/tr/td[1]/table[2]/tr[4]/td[2]/text()').extract())
-        content = ''.join(hxs.select('/html/body/table[3]/tr/td[2]/table[3]/tr/td[1]/table[2]/tr[5]/td[2]/table[2]/tr/td/text()').extract())
+        fid = 2
+        title = ''.join(hxs.select('//td[contains(text(),"信息主题")]/following-sibling::td/text()').extract())
+        content = ''.join(hxs.select('//p[contains(text(),"详细介绍")]/parent::td/following-sibling::td/table[2]/descendant-or-self::text()').extract())
 
         #print title
-        self.post('ab', 'de', fid, uid, '资讯小编', '')
+        self.post(title, content, fid, uid, '资讯小编', '')
