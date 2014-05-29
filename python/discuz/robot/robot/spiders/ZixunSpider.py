@@ -64,7 +64,7 @@ class ZixunSpider(CrawlSpider):
         self.cursor.execute('INSERT INTO pre_forum_post (pid, fid, tid, author, authorid, subject, dateline, message, useip, port) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', param)
 
         #更新论坛版块内容 pre_forum_forum
-        lastpost = '%s  %s  %s  %s' % (tid, subject, unixtime, author)
+        lastpost = '%s	%s	%s	%s' % (tid, subject, unixtime, author)
         self.cursor.execute('update pre_forum_forum set threads = threads + 1, posts=posts+1, todayposts=todayposts+1, lastpost=%s where fid=%s', (lastpost,fid))
 
         #更新用户统计数据 pre_common_member_count
