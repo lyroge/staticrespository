@@ -25,12 +25,15 @@ def timestamp(dtstr):
 class ZixunSpider(CrawlSpider):
     name = "Zixun"
     allowed_domains = []
-    start_urls = ['http://www.echang.cn/2shou/?page=1']
+    start_urls = ['http://www.echang.cn/2shou/?page=1', 'http://www.echang.cn/job/qy.asp?gw=&lx=&sj=365&gz=&xl=&key=&page=1']
 
     rules = (
         #易畅二手市场
-        Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1-3]$"))),
-        Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=\d+', )), callback='parse_item')
+        Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1]$"))),
+        Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=\d+$', )), callback='parse_echang_ershou'),
+
+        #易畅招聘
+        Rule(SgmlLinkExtractor(unique=True,allow=('zhaopin.asp\?id=\d+$', )), callback='parse_echang_zhaopin')
     ,)
 
     def __del__(self):
@@ -59,7 +62,7 @@ class ZixunSpider(CrawlSpider):
         self.cursor.execute('INSERT INTO pre_forum_post_tableid(pid) values(%s)', ('0',))
         pid = self.cursor.lastrowid
 
-        #插入主题内容 pre_forum_post
+        #插入主题内容 pre_forum_post [htmlon=1, bbcodeoff=-1] 允许帖子中html代码
         param = (pid, fid, tid, author, authorid, subject, unixtime, content, '127.0.0.1', '22622')
         self.cursor.execute('INSERT INTO pre_forum_post (pid, fid, tid, author, authorid, subject, dateline, message, useip, port) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', param)
 
@@ -70,7 +73,8 @@ class ZixunSpider(CrawlSpider):
         #更新用户统计数据 pre_common_member_count
         self.cursor.execute('update pre_common_member_count set posts=posts+1, threads=threads+1 where uid=%s', (authorid,))
 
-    def parse_item(self, response):
+	#易畅二手
+    def parse_echang_ershou(self, response):
         hxs = HtmlXPathSelector(response)
         url = response.url
         urlmd5 = md5(url)
@@ -95,7 +99,6 @@ class ZixunSpider(CrawlSpider):
         content = content + "\r\n[b]联系电话：[/b]" + telphone
         content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
 
-
         if '供应' in typename:
             typeid = 4
         else:
@@ -107,6 +110,48 @@ class ZixunSpider(CrawlSpider):
             author =  username if username else '资讯小编'
             d1 = datetime.datetime.now()
             #d3 = d1 + datetime.timedelta(days = random.randint(-20, 0))
+            d3 = d1 + datetime.timedelta(hours = random.randint(-17, 0))
+            d3 = d3 + datetime.timedelta(minutes = random.randint(-30, 12))
+            d3 = d3 + datetime.timedelta(seconds = random.randint(-45, 2))
+            posttime = d3.strftime('%Y-%m-%d %H:%M')
+            self.post(title, content, fid, uid, author, posttime, typeid)
+
+            #记录痕迹
+            self.cursor.execute('insert url_history(url, urlmd5) values(%s, %s)', (url, urlmd5))
+
+	#易畅招聘
+    def parse_echang_zhaopin(self, response):
+        hxs = HtmlXPathSelector(response)
+        url = response.url
+        urlmd5 = md5(url)
+        self.cursor.execute('select url from url_history where urlmd5=%s', (urlmd5,))
+        r = self.cursor.fetchone()
+        if  r:
+            print 'scraped'
+            return None
+
+        #设置用户、版块、类别等信息
+        uid = 12
+        fid = 42
+        typeid = 0
+
+        title = ''.join(hxs.select(u'//font[contains(text(),"招聘职位：")]/parent::td/following-sibling::td/descendant-or-self::text()').extract()).encode('utf8')
+        xueli = ''.join(hxs.select(u'//td[contains(text(),"学历要求：")]/following-sibling::td/text()').extract()).encode('utf8')
+        xinzi = ''.join(hxs.select(u'//td[contains(text(),"提供月薪：")]/following-sibling::td/text()').extract()).encode('utf8')
+        zhize = ''.join(hxs.select(u'//td[contains(text(),"招聘备注：")]/following-sibling::td/text()').extract()).encode('utf8')
+
+        content = "[b]招聘职位：[/b]" + title
+        content = content + "\r\n[b]学历要求：[/b]" + xueli
+        content = content + "\r\n[b]提供月薪：[/b]" + xinzi
+        content = content + "\r\n[b]岗位职责[/b]\r\n" + zhize
+        content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
+
+        if title:
+            print title
+
+            author =  '招聘编辑'
+            d1 = datetime.datetime.now()
+            #d3 = d1 + datetime.timedelta(days = random.randint(-6, 0))
             d3 = d1 + datetime.timedelta(hours = random.randint(-17, 0))
             d3 = d3 + datetime.timedelta(minutes = random.randint(-30, 12))
             d3 = d3 + datetime.timedelta(seconds = random.randint(-45, 2))
