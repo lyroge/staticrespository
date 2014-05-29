@@ -51,8 +51,8 @@ class ZixunSpider(CrawlSpider):
     def post(self, subject, content, fid, authorid, author, posttime, typeid):
         #插入主题
         unixtime = timestamp(posttime)  
-        param = (fid, author, authorid, subject, unixtime, unixtime, author, typeid)
-        self.cursor.execute('INSERT INTO pre_forum_thread(fid, author, authorid, subject, dateline, lastpost, lastposter, typeid) values(%s, %s, %s, %s, %s, %s, %s, %s)', param)
+        param = (fid, author, authorid, subject, unixtime, unixtime, author, typeid, random.randint(8, 51))
+        self.cursor.execute('INSERT INTO pre_forum_thread(fid, author, authorid, subject, dateline, lastpost, lastposter, typeid, views) values(%s, %s, %s, %s, %s, %s, %s, %s, %s)', param)
         tid = self.cursor.lastrowid
 
         #获取pid pre_forum_post_tableid
@@ -80,8 +80,8 @@ class ZixunSpider(CrawlSpider):
             return None
 
         #设置用户、版块、类别等信息
-        uid = 2
-        fid = 39
+        uid = 12
+        fid = 41
         typeid = 0
 
         typename = ''.join(hxs.select(u'//td[contains(text(),"供求类别")]/following-sibling::td/text()').extract()).encode('utf8')
@@ -96,9 +96,9 @@ class ZixunSpider(CrawlSpider):
 
 
         if '供应' in typename:
-            typeid = 2
+            typeid = 4
         else:
-            typeid = 1
+            typeid = 3
 
         if title:
             print title
