@@ -1,6 +1,6 @@
 # -- coding:utf-8 --
 
-import re, os, random, datetime, time
+import re, os, random, datetime, time, hashlib
 import MySQLdb, MySQLdb.cursors
 
 from scrapy.contrib.spiders import CrawlSpider, Rule
@@ -10,6 +10,9 @@ from scrapy.http import Request
 from scrapy.shell import inspect_response
 
 from robot.const.db import HOST,USER,PASSWD,DB
+
+def md5(s):
+    return hashlib.md5(s).hexdigest()
 
 def timestamp(dtstr):
     if not dtstr:
@@ -26,7 +29,7 @@ class ZixunSpider(CrawlSpider):
 
     rules = (
         #Rule(SgmlLinkExtractor(unique=True,allow=("\?page=1"))),
-        Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=207641', )), callback='parse_item')
+        Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=\d+', )), callback='parse_item')
     ,)
 
     def __del__(self):
@@ -65,15 +68,22 @@ class ZixunSpider(CrawlSpider):
 
         #更新用户统计数据 pre_common_member_count
         self.cursor.execute('update pre_common_member_count set posts=posts+1, threads=threads+1 where uid=%s', (authorid,))
-        print 'done'
 
     def parse_item(self, response):
         hxs = HtmlXPathSelector(response)
+        url = response.url
+        urlmd5 = md5(url)
+        self.cursor.execute('select url from url_history where urlmd5=%s', (urlmd5,))
+        r = self.cursor.fetchone()
+        if  r:
+            return None
 
         uid = 2
-        fid = 2
-        title = ''.join(hxs.select('//td[contains(text(),"信息主题")]/following-sibling::td/text()').extract())
-        content = ''.join(hxs.select('//p[contains(text(),"详细介绍")]/parent::td/following-sibling::td/table[2]/descendant-or-self::text()').extract())
+        fid = 39
+        title = ''.join(hxs.select(u'//td[contains(text(),"信息主题")]/following-sibling::td/text()').extract())
+        content = ''.join(hxs.select(u'//p[contains(text(),"详细介绍")]/parent::td/following-sibling::td/table[2]/descendant-or-self::text()').extract())
 
-        #print title
-        self.post(title, content, fid, uid, '资讯小编', '')
+        if title:
+            print title.encode('utf8')
+            self.post(title.encode('utf8'), content.encode('utf8'), fid, uid, '资讯小编', '')
+            self.cursor.execute('insert url_history(url, urlmd5) values(%s, %s)', (url, urlmd5))

@@ -17,7 +17,11 @@ NEWSPIDER_MODULE = 'robot.spiders'
 
 DEBUG_REQUEST = False
 COOKIES_DEBUG = False
+LOG_ENABLED = False
 
+
+DOWNLOAD_DELAY = 3
+RANDOMIZE_DOWNLOAD_DELAY = True
 
 DEFAULT_REQUEST_HEADERS ={
      'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
