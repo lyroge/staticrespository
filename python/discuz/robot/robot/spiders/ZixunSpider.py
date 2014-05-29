@@ -28,7 +28,8 @@ class ZixunSpider(CrawlSpider):
     start_urls = ['http://www.echang.cn/2shou/?page=1']
 
     rules = (
-        #Rule(SgmlLinkExtractor(unique=True,allow=("\?page=1"))),
+        #易畅二手市场
+        Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1-5]"))),
         Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=\d+', )), callback='parse_item')
     ,)
 
@@ -47,11 +48,11 @@ class ZixunSpider(CrawlSpider):
         #super init 
         super(ZixunSpider, self).__init__()
 
-    def post(self, subject, content, fid, authorid, author, posttime):
+    def post(self, subject, content, fid, authorid, author, posttime, typeid):
         #插入主题
         unixtime = timestamp(posttime)  
-        param = (fid, author, authorid, subject, unixtime, unixtime, author)
-        self.cursor.execute('INSERT INTO pre_forum_thread(fid, author, authorid, subject, dateline, lastpost, lastposter) values(%s, %s, %s, %s, %s, %s, %s)', param)
+        param = (fid, author, authorid, subject, unixtime, unixtime, author, typeid)
+        self.cursor.execute('INSERT INTO pre_forum_thread(fid, author, authorid, subject, dateline, lastpost, lastposter, typeid) values(%s, %s, %s, %s, %s, %s, %s, %s)', param)
         tid = self.cursor.lastrowid
 
         #获取pid pre_forum_post_tableid
@@ -78,12 +79,38 @@ class ZixunSpider(CrawlSpider):
         if  r:
             return None
 
+        #设置用户、版块、类别等信息
         uid = 2
         fid = 39
-        title = ''.join(hxs.select(u'//td[contains(text(),"信息主题")]/following-sibling::td/text()').extract())
-        content = ''.join(hxs.select(u'//p[contains(text(),"详细介绍")]/parent::td/following-sibling::td/table[2]/descendant-or-self::text()').extract())
+        typeid = 0
+
+        typename = ''.join(hxs.select(u'//td[contains(text(),"供求类别")]/following-sibling::td/text()').extract()).encode('utf8')
+        title = ''.join(hxs.select(u'//td[contains(text(),"信息主题")]/following-sibling::td/text()').extract()).encode('utf8')
+        username = ''.join(hxs.select(u'//td[contains(text(),"联系姓名")]/following-sibling::td/text()').extract()).encode('utf8')
+        telphone = ''.join(hxs.select(u'//td[contains(text(),"联系电话")]/following-sibling::td/text()').extract()).encode('utf8')
+
+        content = ''.join(hxs.select(u'//p[contains(text(),"详细介绍")]/parent::td/following-sibling::td/table[2]/descendant-or-self::text()').extract()).encode('utf8')
+        content = content + "\r\n[b]联系人：[/b]" + username
+        content = content + "\r\n[b]联系电话：[/b]" + telphone
+        content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
+
+
+        if '供应' in typename:
+            typeid = 2
+        else:
+            typeid = 1
 
         if title:
-            print title.encode('utf8')
-            self.post(title.encode('utf8'), content.encode('utf8'), fid, uid, '资讯小编', '')
+            print title
+
+            author =  username if username else '资讯小编'
+            d1 = datetime.datetime.now()
+            d3 = d1 + datetime.timedelta(days = random.randint(-20, 0))
+            d3 = d3 + datetime.timedelta(hours = random.randint(-30, 0))
+            d3 = d3 + datetime.timedelta(minutes = random.randint(-30, 12))
+            d3 = d3 + datetime.timedelta(seconds = random.randint(-45, 2))
+            posttime = d3.strftime('%Y-%m-%d %H:%M')
+            self.post(title, content, fid, uid, author, posttime, typeid)
+
+            #记录痕迹
             self.cursor.execute('insert url_history(url, urlmd5) values(%s, %s)', (url, urlmd5))
