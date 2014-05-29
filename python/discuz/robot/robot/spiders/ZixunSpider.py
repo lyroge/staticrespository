@@ -29,7 +29,7 @@ class ZixunSpider(CrawlSpider):
 
     rules = (
         #易畅二手市场
-        Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1-5]"))),
+        Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1-3]$"))),
         Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=\d+', )), callback='parse_item')
     ,)
 
@@ -77,6 +77,7 @@ class ZixunSpider(CrawlSpider):
         self.cursor.execute('select url from url_history where urlmd5=%s', (urlmd5,))
         r = self.cursor.fetchone()
         if  r:
+            print 'scraped'
             return None
 
         #设置用户、版块、类别等信息
@@ -105,8 +106,8 @@ class ZixunSpider(CrawlSpider):
 
             author =  username if username else '资讯小编'
             d1 = datetime.datetime.now()
-            d3 = d1 + datetime.timedelta(days = random.randint(-20, 0))
-            d3 = d3 + datetime.timedelta(hours = random.randint(-30, 0))
+            #d3 = d1 + datetime.timedelta(days = random.randint(-20, 0))
+            d3 = d1 + datetime.timedelta(hours = random.randint(-17, 0))
             d3 = d3 + datetime.timedelta(minutes = random.randint(-30, 12))
             d3 = d3 + datetime.timedelta(seconds = random.randint(-45, 2))
             posttime = d3.strftime('%Y-%m-%d %H:%M')
