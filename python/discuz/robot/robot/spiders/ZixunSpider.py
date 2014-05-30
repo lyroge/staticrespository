@@ -11,9 +11,11 @@ from scrapy.shell import inspect_response
 
 from robot.const.db import HOST,USER,PASSWD,DB
 
+#url md5加密
 def md5(s):
     return hashlib.md5(s).hexdigest()
 
+#获取时间戳
 def timestamp(dtstr):
     if not dtstr:
         a = datetime.datetime.now()
@@ -22,18 +24,33 @@ def timestamp(dtstr):
     t=time.mktime(a.timetuple())
     return t
 
+#过滤特殊字符
+def filter_spechar(s):
+    s = s.replace('█', '')
+    s = s.replace('◆', '')
+    s = s.replace('★', '')
+    s = s.replace('●', '')
+    s = s.replace('▲', '')
+    s = s.replace('▼', '')
+    s = s.replace('&nbsp;', '')
+    return s.strip()
+
 class ZixunSpider(CrawlSpider):
     name = "Zixun"
     allowed_domains = []
-    start_urls = ['http://www.echang.cn/2shou/?page=1', 'http://www.echang.cn/job/qy.asp?gw=&lx=&sj=365&gz=&xl=&key=&page=1']
+
+    start_urls = ['http://www.echang.cn/house/lx.asp?lx=1&page=1',''''http://www.echang.cn/2shou/?page=1', 'http://www.echang.cn/job/qy.asp?gw=&lx=&sj=365&gz=&xl=&key=&page=1',''']
+
+    #易畅二手市场
+    '''Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1]$"))),
+    Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=\d+$', )), callback='parse_echang_ershou'),
+
+    #易畅招聘
+    Rule(SgmlLinkExtractor(unique=True,allow=('zhaopin.asp\?id=\d+$', )), callback='parse_echang_zhaopin')'''
 
     rules = (
-        #易畅二手市场
-        Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1]$"))),
-        Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=\d+$', )), callback='parse_echang_ershou'),
-
-        #易畅招聘
-        Rule(SgmlLinkExtractor(unique=True,allow=('zhaopin.asp\?id=\d+$', )), callback='parse_echang_zhaopin')
+        #易畅求租
+        Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=1730241$', )), callback='parse_echang_fangchan')
     ,)
 
     def __del__(self):
@@ -67,13 +84,13 @@ class ZixunSpider(CrawlSpider):
         self.cursor.execute('INSERT INTO pre_forum_post (pid, fid, tid, author, authorid, subject, dateline, message, useip, port) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', param)
 
         #更新论坛版块内容 pre_forum_forum
-        lastpost = '%s	%s	%s	%s' % (tid, subject, unixtime, author)
+        lastpost = '%s  %s  %s  %s' % (tid, subject, unixtime, author)
         self.cursor.execute('update pre_forum_forum set threads = threads + 1, posts=posts+1, todayposts=todayposts+1, lastpost=%s where fid=%s', (lastpost,fid))
 
         #更新用户统计数据 pre_common_member_count
         self.cursor.execute('update pre_common_member_count set posts=posts+1, threads=threads+1 where uid=%s', (authorid,))
 
-	#易畅二手
+    #易畅二手
     def parse_echang_ershou(self, response):
         hxs = HtmlXPathSelector(response)
         url = response.url
@@ -119,7 +136,7 @@ class ZixunSpider(CrawlSpider):
             #记录痕迹
             self.cursor.execute('insert url_history(url, urlmd5) values(%s, %s)', (url, urlmd5))
 
-	#易畅招聘
+    #易畅招聘
     def parse_echang_zhaopin(self, response):
         hxs = HtmlXPathSelector(response)
         url = response.url
@@ -156,6 +173,56 @@ class ZixunSpider(CrawlSpider):
             d3 = d3 + datetime.timedelta(minutes = random.randint(-30, 12))
             d3 = d3 + datetime.timedelta(seconds = random.randint(-45, 2))
             posttime = d3.strftime('%Y-%m-%d %H:%M')
+            self.post(title, content, fid, uid, author, posttime, typeid)
+
+            #记录痕迹
+            self.cursor.execute('insert url_history(url, urlmd5) values(%s, %s)', (url, urlmd5))
+
+
+    def parse_echang_fangchan(self, response):
+        hxs = HtmlXPathSelector(response)
+        url = response.url
+        urlmd5 = md5(url)
+        self.cursor.execute('select url from url_history where urlmd5=%s', (urlmd5,))
+        r = self.cursor.fetchone()
+        if  r:
+            print 'scraped'
+            return None
+
+        #设置用户、版块、类别等信息
+        uid = 2
+        fid = 39
+        typeid = 0
+
+        title = ''.join(hxs.select(u'//td[contains(text(),"具体位置")]/following-sibling::td/text()').extract()).encode('utf8')
+        lb = ''.join(hxs.select(u'//td[contains(text(),"所属社区")]/preceding-sibling::td[1]/text()').extract()).encode('utf8')
+        mark = '\r\n'.join(hxs.select(u'//td[contains(text()," 注")]//following-sibling::td/text()').extract()).encode('utf8')
+        username = ''.join(hxs.select(u'//td[starts-with(text(),"姓")]//following-sibling::td[position()=1]/text()').extract()).encode('utf8')
+        telephone = ''.join(hxs.select(u'//td[contains(text(),"联系电话")]//following-sibling::td[position()=1]/text()').extract()).encode('utf8')
+        mobile = ''.join(hxs.select(u'//td[contains(text(),"联系手机")]//following-sibling::td[position()=1]/text()').extract()).encode('utf8')
+
+        content = mark
+        content = content + "\r\n\r\n[b]联系电话：[/b]" + telephone
+        content = content + "\r\n[b]联系手机：[/b]" + mobile
+        content = content + "\r\n[b]联系人：[/b]" + username
+
+        content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
+        content = content
+
+        title = filter_spechar(title)
+        content = filter_spechar(content)
+
+        if title:
+            print title
+
+            author =  username if username else '房产编辑'
+            d1 = datetime.datetime.now()
+            #d3 = d1 + datetime.timedelta(days = random.randint(-6, 0))
+            d3 = d1 + datetime.timedelta(hours = random.randint(-17, 0))
+            d3 = d3 + datetime.timedelta(minutes = random.randint(-30, 12))
+            d3 = d3 + datetime.timedelta(seconds = random.randint(-45, 2))
+            posttime = d3.strftime('%Y-%m-%d %H:%M')
+
             self.post(title, content, fid, uid, author, posttime, typeid)
 
             #记录痕迹
