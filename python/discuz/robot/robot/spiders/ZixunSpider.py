@@ -194,9 +194,9 @@ class ZixunSpider(CrawlSpider):
         fid = 39
         typeid = 0
 
-        title = ''.join(hxs.select(u'//td[contains(text(),"具体位置")]/following-sibling::td/text()').extract()).encode('utf8')
-        lb = ''.join(hxs.select(u'//td[contains(text(),"所属社区")]/preceding-sibling::td[1]/text()').extract()).encode('utf8')
-        mark = '\r\n'.join(hxs.select(u'//td[contains(text()," 注")]//following-sibling::td/text()').extract()).encode('utf8')
+        title = ''.join(hxs.select(u'//td[contains(text(),"具体位置")]/following-sibling::td/text()').extract()).replace(u'\xa0', u'').encode('utf8')
+        lb = ''.join(hxs.select(u'//td[contains(text(),"所属社区")]/preceding-sibling::td[1]/text()').extract()).replace(u'\xa0', u'').encode('utf8')
+        mark = '\r\n'.join(hxs.select(u'//td[contains(text()," 注")]//following-sibling::td/text()').extract()).replace(u'\xa0', u'').encode('utf8')
         username = ''.join(hxs.select(u'//td[starts-with(text(),"姓")]//following-sibling::td[position()=1]/text()').extract()).encode('utf8')
         telephone = ''.join(hxs.select(u'//td[contains(text(),"联系电话")]//following-sibling::td[position()=1]/text()').extract()).encode('utf8')
         mobile = ''.join(hxs.select(u'//td[contains(text(),"联系手机")]//following-sibling::td[position()=1]/text()').extract()).encode('utf8')
