@@ -39,18 +39,18 @@ class ZixunSpider(CrawlSpider):
     name = "Zixun"
     allowed_domains = []
 
-    start_urls = ['http://www.echang.cn/house/lx.asp?lx=1&page=1',''''http://www.echang.cn/2shou/?page=1', 'http://www.echang.cn/job/qy.asp?gw=&lx=&sj=365&gz=&xl=&key=&page=1',''']
-
-    #易畅二手市场
-    '''Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1]$"))),
-    Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=\d+$', )), callback='parse_echang_ershou'),
-
-    #易畅招聘
-    Rule(SgmlLinkExtractor(unique=True,allow=('zhaopin.asp\?id=\d+$', )), callback='parse_echang_zhaopin')'''
+    start_urls = ['http://www.echang.cn/house/index.asp','http://www.echang.cn/2shou/?page=1','http://www.echang.cn/job/qy.asp?gw=&lx=&sj=365&gz=&xl=&key=&page=1']
 
     rules = (
+        #易畅二手市场
+        Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1]$"))),
+        Rule(SgmlLinkExtractor(unique=True,allow=('/2shou/xiangxi.asp\?id=207650$', )), callback='parse_echang_ershou'),
+
+        #易畅招聘
+        Rule(SgmlLinkExtractor(unique=True,allow=('/job/zhaopin.asp\?id=1657$', )), callback='parse_echang_zhaopin'),
+
         #易畅求租
-        Rule(SgmlLinkExtractor(unique=True,allow=('xiangxi.asp\?id=1730241$', )), callback='parse_echang_fangchan')
+        Rule(SgmlLinkExtractor(unique=True,allow=('/house/xiangxi.asp\?id=1730979$')), callback='parse_echang_fangchan')
     ,)
 
     def __del__(self):
@@ -84,7 +84,7 @@ class ZixunSpider(CrawlSpider):
         self.cursor.execute('INSERT INTO pre_forum_post (pid, fid, tid, author, authorid, subject, dateline, message, useip, port) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', param)
 
         #更新论坛版块内容 pre_forum_forum
-        lastpost = '%s  %s  %s  %s' % (tid, subject, unixtime, author)
+        lastpost = '%s	%s	%s	%s' % (tid, subject, unixtime, author)
         self.cursor.execute('update pre_forum_forum set threads = threads + 1, posts=posts+1, todayposts=todayposts+1, lastpost=%s where fid=%s', (lastpost,fid))
 
         #更新用户统计数据 pre_common_member_count
@@ -102,8 +102,8 @@ class ZixunSpider(CrawlSpider):
             return None
 
         #设置用户、版块、类别等信息
-        uid = 12
-        fid = 41
+        uid = 2
+        fid = 2
         typeid = 0
 
         typename = ''.join(hxs.select(u'//td[contains(text(),"供求类别")]/following-sibling::td/text()').extract()).encode('utf8')
@@ -122,7 +122,7 @@ class ZixunSpider(CrawlSpider):
             typeid = 3
 
         if title:
-            print title
+            print 'ershou'
 
             author =  username if username else '资讯小编'
             d1 = datetime.datetime.now()
@@ -148,8 +148,8 @@ class ZixunSpider(CrawlSpider):
             return None
 
         #设置用户、版块、类别等信息
-        uid = 12
-        fid = 42
+        uid = 2
+        fid = 2
         typeid = 0
 
         title = ''.join(hxs.select(u'//font[contains(text(),"招聘职位：")]/parent::td/following-sibling::td/descendant-or-self::text()').extract()).encode('utf8')
@@ -164,7 +164,7 @@ class ZixunSpider(CrawlSpider):
         content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
 
         if title:
-            print title
+            print 'zhaopin'
 
             author =  '招聘编辑'
             d1 = datetime.datetime.now()
@@ -178,7 +178,7 @@ class ZixunSpider(CrawlSpider):
             #记录痕迹
             self.cursor.execute('insert url_history(url, urlmd5) values(%s, %s)', (url, urlmd5))
 
-
+    #易畅房产
     def parse_echang_fangchan(self, response):
         hxs = HtmlXPathSelector(response)
         url = response.url
@@ -191,7 +191,7 @@ class ZixunSpider(CrawlSpider):
 
         #设置用户、版块、类别等信息
         uid = 2
-        fid = 39
+        fid = 2
         typeid = 0
 
         title = ''.join(hxs.select(u'//td[contains(text(),"具体位置")]/following-sibling::td/text()').extract()).replace(u'\xa0', u'').encode('utf8')
@@ -211,9 +211,14 @@ class ZixunSpider(CrawlSpider):
 
         title = filter_spechar(title)
         content = filter_spechar(content)
+        lb = filter_spechar(lb)
+
+        type_dic = {'房屋出租':1, '房屋求租':2, '房屋出售':3, '房屋求购':4}
+        typeid = type_dic[lb]
+
 
         if title:
-            print title
+            print 'fangchan'
 
             author =  username if username else '房产编辑'
             d1 = datetime.datetime.now()
