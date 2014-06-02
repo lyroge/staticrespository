@@ -15,9 +15,10 @@ NEWSPIDER_MODULE = 'robot.spiders'
 #USER_AGENT = 'robot (+http://www.yourdomain.com)'
 
 
-DEBUG_REQUEST = False
-COOKIES_DEBUG = False
-LOG_ENABLED = False
+DEBUG_REQUEST = True
+COOKIES_DEBUG = True
+COOKIES_ENABLED = True
+LOG_ENABLED = True
 
 
 DOWNLOAD_DELAY = 3
@@ -28,4 +29,8 @@ DEFAULT_REQUEST_HEADERS ={
      'Accept-Encoding':'gzip,deflate',
      'Referer':'http://www.google.com/',
      'User-Agent':'GoogleBot'
+}
+
+DOWNLOADER_MIDDLEWARES = {
+    'robot.middleware.logincookie.LoginCookieMiddleware': 101,
 }

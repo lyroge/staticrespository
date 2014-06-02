@@ -157,11 +157,21 @@ class ZixunSpider(CrawlSpider):
         xinzi = ''.join(hxs.select(u'//td[contains(text(),"提供月薪：")]/following-sibling::td/text()').extract()).encode('utf8')
         zhize = ''.join(hxs.select(u'//td[contains(text(),"招聘备注：")]/following-sibling::td/text()').extract()).encode('utf8')
 
+        danwei = ''.join(hxs.select(u'//td[contains(text(),"单位名称：")]/following-sibling::td/text()').extract()).encode('utf8')
+        dianhua = ''.join(hxs.select(u'//td[contains(text(),"联系电话：")]/following-sibling::td/text()').extract()).encode('utf8')
+        intro = ''.join(hxs.select(u'//td[contains(text(),"公司介绍：")]/following-sibling::td/text()').extract()).encode('utf8')
+
+
         content = "[b]招聘职位：[/b]" + title
         content = content + "\r\n[b]学历要求：[/b]" + xueli
         content = content + "\r\n[b]提供月薪：[/b]" + xinzi
         content = content + "\r\n[b]岗位职责[/b]\r\n" + zhize
-        content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
+
+        content = content + "\r\n\r\n[b]单位名称[/b]\r\n" + danwei
+        content = content + "\r\n\r\n[b]联系电话[/b]\r\n" + dianhua
+        content = content + "\r\n\r\n[b]公司介绍[/b]\r\n" + intro
+
+        content = content + "\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
 
         if title:
             print 'zhaopin'
