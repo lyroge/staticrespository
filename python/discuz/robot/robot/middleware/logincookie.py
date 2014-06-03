@@ -14,5 +14,3 @@ class LoginCookieMiddleware(object):
             request.cookies['ASPSESSIONIDQSTDBTDR'] = 'OGDKJGIBGJJIAHAEPACCMIDH'
             request.cookies['bdshare_firstime'] = '1392548114409'
             request.cookies['echang%2Ecn'] = 'hypwd=d41d8cd98f00b204e9800998ecf8427e&huiyuan=%D0%A1%5F%B8%D5'
-
-            print 'set cookie'

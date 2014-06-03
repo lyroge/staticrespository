@@ -1,6 +1,6 @@
 # -- coding:utf-8 --
 
-import re, os, random, datetime, time, hashlib
+import re, os, random, datetime, time, hashlib, pytz
 import MySQLdb, MySQLdb.cursors
 
 from scrapy.contrib.spiders import CrawlSpider, Rule
@@ -11,6 +11,8 @@ from scrapy.shell import inspect_response
 
 from robot.const.db import HOST,USER,PASSWD,DB
 
+tz = pytz.timezone('Asia/Shanghai')
+
 #url md5加密
 def md5(s):
     return hashlib.md5(s).hexdigest()
@@ -18,7 +20,7 @@ def md5(s):
 #获取时间戳
 def timestamp(dtstr):
     if not dtstr:
-        a = datetime.datetime.now()
+        a = datetime.datetime.now(tz)
     else:
         a=datetime.datetime.strptime(dtstr, '%Y-%m-%d %H:%M')
     t=time.mktime(a.timetuple())
@@ -44,13 +46,13 @@ class ZixunSpider(CrawlSpider):
     rules = (
         #易畅二手市场
         Rule(SgmlLinkExtractor(unique=True,allow=("\?page=[1]$"))),
-        Rule(SgmlLinkExtractor(unique=True,allow=('/2shou/xiangxi.asp\?id=207650$', )), callback='parse_echang_ershou'),
+        Rule(SgmlLinkExtractor(unique=True,allow=('/2shou/xiangxi.asp\?id=\d+$', )), callback='parse_echang_ershou'),
 
         #易畅招聘
-        Rule(SgmlLinkExtractor(unique=True,allow=('/job/zhaopin.asp\?id=1657$', )), callback='parse_echang_zhaopin'),
+        Rule(SgmlLinkExtractor(unique=True,allow=('/job/zhaopin.asp\?id=\d+$', )), callback='parse_echang_zhaopin'),
 
         #易畅求租
-        Rule(SgmlLinkExtractor(unique=True,allow=('/house/xiangxi.asp\?id=1730979$')), callback='parse_echang_fangchan')
+        Rule(SgmlLinkExtractor(unique=True,allow=('/house/xiangxi.asp\?id=\d+$')), callback='parse_echang_fangchan')
     ,)
 
     def __del__(self):
@@ -101,9 +103,9 @@ class ZixunSpider(CrawlSpider):
             print 'scraped'
             return None
 
-        #设置用户、版块、类别等信息
-        uid = 2
-        fid = 2
+        #设置用户、版块、类别等信息 uid:12 fid:41
+        uid = 12
+        fid = 41
         typeid = 0
 
         typename = ''.join(hxs.select(u'//td[contains(text(),"供求类别")]/following-sibling::td/text()').extract()).encode('utf8')
@@ -125,9 +127,9 @@ class ZixunSpider(CrawlSpider):
             print 'ershou'
 
             author =  username if username else '资讯小编'
-            d1 = datetime.datetime.now()
+            d1 = datetime.datetime.now(tz)
             #d3 = d1 + datetime.timedelta(days = random.randint(-20, 0))
-            d3 = d1 + datetime.timedelta(hours = random.randint(-17, 0))
+            d3 = d1 + datetime.timedelta(hours = random.randint(-2, 0))
             d3 = d3 + datetime.timedelta(minutes = random.randint(-30, 12))
             d3 = d3 + datetime.timedelta(seconds = random.randint(-45, 2))
             posttime = d3.strftime('%Y-%m-%d %H:%M')
@@ -147,9 +149,9 @@ class ZixunSpider(CrawlSpider):
             print 'scraped'
             return None
 
-        #设置用户、版块、类别等信息
-        uid = 2
-        fid = 2
+        #设置用户、版块、类别等信息 uid:12 fid:42
+        uid = 12
+        fid = 42
         typeid = 0
 
         title = ''.join(hxs.select(u'//font[contains(text(),"招聘职位：")]/parent::td/following-sibling::td/descendant-or-self::text()').extract()).encode('utf8')
@@ -177,9 +179,9 @@ class ZixunSpider(CrawlSpider):
             print 'zhaopin'
 
             author =  '招聘编辑'
-            d1 = datetime.datetime.now()
+            d1 = datetime.datetime.now(tz)
             #d3 = d1 + datetime.timedelta(days = random.randint(-6, 0))
-            d3 = d1 + datetime.timedelta(hours = random.randint(-17, 0))
+            d3 = d1 + datetime.timedelta(hours = random.randint(-2, 0))
             d3 = d3 + datetime.timedelta(minutes = random.randint(-30, 12))
             d3 = d3 + datetime.timedelta(seconds = random.randint(-45, 2))
             posttime = d3.strftime('%Y-%m-%d %H:%M')
@@ -199,9 +201,9 @@ class ZixunSpider(CrawlSpider):
             print 'scraped'
             return None
 
-        #设置用户、版块、类别等信息
-        uid = 2
-        fid = 2
+        #设置用户、版块、类别等信息 uid:12 fid:43
+        uid = 12
+        fid = 43
         typeid = 0
 
         title = ''.join(hxs.select(u'//td[contains(text(),"具体位置")]/following-sibling::td/text()').extract()).replace(u'\xa0', u'').encode('utf8')
@@ -223,7 +225,7 @@ class ZixunSpider(CrawlSpider):
         content = filter_spechar(content)
         lb = filter_spechar(lb)
 
-        type_dic = {'房屋出租':1, '房屋求租':2, '房屋出售':3, '房屋求购':4}
+        type_dic = {'房屋出租':5, '房屋求租':6, '房屋出售':7, '房屋求购':8}
         typeid = type_dic[lb]
 
 
@@ -231,9 +233,9 @@ class ZixunSpider(CrawlSpider):
             print 'fangchan'
 
             author =  username if username else '房产编辑'
-            d1 = datetime.datetime.now()
+            d1 = datetime.datetime.now(tz)
             #d3 = d1 + datetime.timedelta(days = random.randint(-6, 0))
-            d3 = d1 + datetime.timedelta(hours = random.randint(-17, 0))
+            d3 = d1 + datetime.timedelta(hours = random.randint(-2, 0))
             d3 = d3 + datetime.timedelta(minutes = random.randint(-30, 12))
             d3 = d3 + datetime.timedelta(seconds = random.randint(-45, 2))
             posttime = d3.strftime('%Y-%m-%d %H:%M')
