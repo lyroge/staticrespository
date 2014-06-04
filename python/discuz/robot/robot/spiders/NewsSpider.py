@@ -131,7 +131,7 @@ class NewsSpider(CrawlSpider):
         content = '<br/>'.join(hxs.select(u'//div[@id="endText"]/p').extract()).encode('utf8')
 
         if title:
-            print '163news'
+            print '163fangchan'
 
             author =  '资讯小编'
             d1 = datetime.datetime.now(tz)

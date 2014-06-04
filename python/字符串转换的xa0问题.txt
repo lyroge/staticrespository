@@ -1,0 +1,7 @@
+unicode中的‘\xa0’字符在转换成gbk编码时会出现问题，gbk无法转换'\xa0'字符。
+
+所以，在转换的时候必需进行一些前置动作：
+
+[html] view plaincopy
+string.replace(u'\xa0', u' ')  
+将'\xa0‘替换成u' '空格。

@@ -1,0 +1,22 @@
+帝国CMS 6.0功能解密之模板list.var支持程序代码 
+
+
+实现要点：
+1、增加模板时list.var模板需要勾选“使用程序代码”选项。
+2、直接添加PHP代码，不需要加<?和?>程序开始和结束标记
+3、字段值数组变量为$r，对应的字段变量为$r[字段名]，如：标题字段变量就是$r[title]。另外编号变量为$no
+4、将最终模板内容赋给$listtemp变量。
+
+list.var模板范例：
+例子1：如果信息没有设置标题图片就显示指定的图片。
+if(empty($r[titlepic]))
+{
+        $r[titlepic]='/images/img.gif';
+}
+$listtemp='<li><a href="[!--titleurl--]"><img src="[!--titlepic--]"></a></li>';
+说明：$r[titlepic]为标题图片字段变量。$listtemp为模板内容变量。
+
+
+自己的例子：
+$newstime = date('Y-m-d', $r['newstime']);
+$listtemp="<li><span>[!--leixing--]</span> <a href=\"[!--titleurl--]\" title=\"[!--oldtitle--]\">[!--title--]</a>".$newstime."</li> ";
