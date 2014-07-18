@@ -116,7 +116,7 @@ class ZixunSpider(CrawlSpider):
         content = ''.join(hxs.select(u'//p[contains(text(),"详细介绍")]/parent::td/following-sibling::td/table[2]/descendant-or-self::text()').extract()).encode('utf8')
         content = content + "\r\n[b]联系人：[/b]" + username
         content = content + "\r\n[b]联系电话：[/b]" + telphone
-        content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
+        content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://www.pgzixun.com [/b][/color]"
 
         if '供应' in typename:
             typeid = 4
@@ -173,7 +173,7 @@ class ZixunSpider(CrawlSpider):
         content = content + "\r\n\r\n[b]联系电话[/b]\r\n" + dianhua
         content = content + "\r\n\r\n[b]公司介绍[/b]\r\n" + intro
 
-        content = content + "\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
+        content = content + "\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://www.pgzixun.com [/b][/color]"
 
         if title:
             print 'zhaopin'
@@ -218,7 +218,7 @@ class ZixunSpider(CrawlSpider):
         content = content + "\r\n[b]联系手机：[/b]" + mobile
         content = content + "\r\n[b]联系人：[/b]" + username
 
-        content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://bbs.pgzixun.com [/b][/color]"
+        content = content + "\r\n\r\n\r\n\r\n[color=red][b]联系时请说明来自平谷资讯网 http://www.pgzixun.com [/b][/color]"
         content = content
 
         title = filter_spechar(title)
