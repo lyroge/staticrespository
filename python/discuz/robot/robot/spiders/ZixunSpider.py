@@ -41,7 +41,7 @@ class ZixunSpider(CrawlSpider):
     name = "Zixun"
     allowed_domains = []
 
-    start_urls = ['http://www.echang.cn/house/index.asp','http://www.echang.cn/2shou/?page=1','http://www.echang.cn/job/qy.asp?gw=&lx=&sj=365&gz=&xl=&key=&page=1']
+    start_urls = ['http://www.echang.cn/house/lx.asp?lx=0','http://www.echang.cn/house/lx.asp?lx=1','http://www.echang.cn/house/lx.asp?lx=2','http://www.echang.cn/house/lx.asp?lx=3','http://www.echang.cn/2shou/?page=1','http://www.echang.cn/job/qy.asp?gw=&lx=&sj=365&gz=&xl=&key=&page=1']
 
     rules = (
         #易畅二手市场
@@ -51,8 +51,8 @@ class ZixunSpider(CrawlSpider):
         #易畅招聘
         Rule(SgmlLinkExtractor(unique=True,allow=('/job/zhaopin.asp\?id=\d+$', )), callback='parse_echang_zhaopin'),
 
-        #易畅求租
-        Rule(SgmlLinkExtractor(unique=True,allow=('/house/xiangxi.asp\?id=\d+$')), callback='parse_echang_fangchan')
+        #易畅房屋买卖租赁 每日取一条最新的
+        Rule(SgmlLinkExtractor(unique=True,allow=('/house/xiangxi.asp\?id=\d+$'),restrict_xpaths=('/html/body/table[5]/tr[2]/td[2]/table[2]/tr/td[1]/table[3]/tr[1]/td[3]/a | /html/body/table[5]/tr[2]/td[2]/table[3]/tr/td[1]/table[3]/tr[1]/td[3]/a | /html/body/table[5]/tr[2]/td[2]/table[6]/tr/td[1]/table[3]/tr[1]/td[2]/a | /html/body/table[5]/tr[2]/td[2]/table[6]/tr/td[3]/table[3]/tr[1]/td[2]/a',)), callback='parse_echang_fangchan')
     ,)
 
     def __del__(self):
