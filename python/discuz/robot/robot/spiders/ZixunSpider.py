@@ -41,7 +41,7 @@ class ZixunSpider(CrawlSpider):
     name = "Zixun"
     allowed_domains = []
 
-    start_urls = ['http://www.echang.cn/house/lx.asp?lx=0','http://www.echang.cn/house/lx.asp?lx=1','http://www.echang.cn/house/lx.asp?lx=2','http://www.echang.cn/house/lx.asp?lx=3','http://www.echang.cn/2shou/?page=1','http://www.echang.cn/job/qy.asp?gw=&lx=&sj=365&gz=&xl=&key=&page=1']
+    start_urls = ['http://www.echang.cn/house/index.asp','http://www.echang.cn/2shou/?page=1','http://www.echang.cn/job/qy.asp?gw=&lx=&sj=365&gz=&xl=&key=&page=1']
 
     rules = (
         #易畅二手市场
