@@ -14,7 +14,7 @@ elasticsearch 搜索服务相关整理
 - [exploring elasticsearch](http://exploringelasticsearch.com/)
 - [outofmemory.cn elasticsearch](http://ju.outofmemory.cn/tag/ElasticSearch/)
 - [http://www.elasticsearch.org/](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/index.html)
-
+- [http://www.elasticsearch.cn/](http://www.elasticsearch.cn/)
 
 #### 收集得一些有用东东
 - Elasticsearch可视化监控台Marvel非常赞 可惜只对开发环境免费 /elasticsearch/bin/plugin -i elasticsearch/marvel/latest 安装
