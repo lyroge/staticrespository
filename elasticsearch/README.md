@@ -13,7 +13,7 @@ elasticsearch 搜索服务相关整理
 - [csdn博客写的一系列教程，有空可以看看参考](http://blog.csdn.net/geloin/article/category/1314311/2)
 - [exploring elasticsearch](http://exploringelasticsearch.com/)
 - [outofmemory.cn elasticsearch](http://ju.outofmemory.cn/tag/ElasticSearch/)
-- [http://www.elasticsearch.org/](http://www.elasticsearch.org/)
+- [http://www.elasticsearch.org/](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/index.html)
 
 
 #### 收集得一些有用东东
