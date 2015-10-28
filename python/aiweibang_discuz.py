@@ -46,7 +46,7 @@ class Discuz(object):
         self.conn = conn
         self.cursor = cursor
 
-    def _make_timestamp(str):
+    def _make_timestamp(self, str):
         if not str:
             a = datetime.datetime.now(tz)
         else:
@@ -82,37 +82,75 @@ class Discuz(object):
 
         # 发布帖子内容 [htmlon=1, bbcodeoff=-1] 允许帖子中html代码
         param = (pid, fid, tid, author, authorid, subject, unixtime, content, '127.0.0.1', '22622', htmlon, bbcodeoff)
-        cursor.execute('INSERT INTO forum_post (pid, fid, tid, author, authorid, subject, dateline, message, useip, port, htmlon, bbcodeoff) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', param)
+        self.cursor.execute('INSERT INTO forum_post (pid, fid, tid, author, authorid, subject, dateline, message, useip, port, htmlon, bbcodeoff) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', param)
 
         # 更新论坛版块内容
         lastpost = '%s  %s    %s  %s' % (tid, subject, unixtime, author)
-        cursor.execute('update forum_forum set threads=threads + 1, posts=posts+1, todayposts=todayposts+1, lastpost=%s where fid=%s', (lastpost, fid))
+        self.cursor.execute('update forum_forum set threads=threads + 1, posts=posts+1, todayposts=todayposts+1, lastpost=%s where fid=%s', (lastpost, fid))
 
         # 更新用户统计数据 common_member_count
-        cursor.execute('update common_member_count set posts=posts+1, threads=threads+1 where uid=%s', (authorid,))
+        self.cursor.execute('update common_member_count set posts=posts+1, threads=threads+1 where uid=%s', (authorid,))
 
 discuz = Discuz(HOST, USER, PASSWD, DB)
 
 PROXY_PhantomJS = '/usr/local/bin/phantomjs'
 driver = webdriver.PhantomJS(PROXY_PhantomJS)
-driver.set_page_load_timeout(10)
+driver.set_page_load_timeout(30)
 
 for i in range(1, 2):
     url = url_template % i
     d = pq(url=url)
-    title_dom_list = d(".msg-list .title a")
-    for dom in title_dom_list:
+    msg_items = d(".msg-list .msg-item")
+    """
+    <div class="msg-item" style="">
+        <div class="date">
+            <span class="day">27</span>
+            <span class="month">15-10</span>
+        </div>
+        <div class="info">
+            <div class="title">
+                <a title="北京住房公积金管理中心2015年公开招聘工作人员公告（含平谷地区）" href="/yuedu/60548236.html" target="_blank">北京住房公积金管理中心2015年公开招聘工作人员公告（含平谷地区）</a>
+            </div>
+            <div class="summary">
+                <div class="pic">
+                    <div class="picinner">
+                        <a title="北京住房公积金管理中心2015年公开招聘工作人员公告（含平谷地区）" href="/yuedu/60548236.html" target="_blank">
+                            <img src="http://awb.img1.xmtbang.com/cover201510/20151027/thumb/ac206bdcaaa94a95944a9e36631c31cd.jpg" onerror="this.parentNode.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode.parentNode)" original="http://awb.img1.xmtbang.com/cover201510/20151027/thumb/ac206bdcaaa94a95944a9e36631c31cd.jpg" alt="北京住房公积金管理中心2015年公开招聘工作人员公告（含平谷地区）" style="display: inline;">
+                        </a>
+                    </div>
+                </div>
+                <div class="text">点上方“平谷资讯" 免费订阅 惊喜不断！平 谷 生 活 一 手 掌 握平谷地区最具影响力微信平台商家合作回</div>
+            </div>
+            <div class="clear h"></div>
+            <div class="ifooter">
+                <span class="text">昨天</span>
+                <span class="fav-operate">
+                    <a class="favarticle " href="javascript:;" data-articleid="60548236">收藏，稍后阅读</a>
+                    <a class="unfavarticle undis" href="http://u.aiweibang.com/fav/article" target="_blank">已收藏</a>
+                </span>
+            </div>
+        </div>
+    </div>
+    """
+    for dom in msg_items:
         d = pq(dom)
-        title = d.text().encode('utf8')
-        print title
-        href = d.attr('href')
+
+        # date
+        date_span_dom = d.find('.date .day')
+        date = date_span_dom.text().encode('utf8')
+
+        # title
+        title_a_dom = d.find('.title a')
+        title = title_a_dom.text().encode('utf8')
+        print date, title
+        href = title_a_dom.attr('href')
 
         print 'get detail page source...'
         try:
             driver.get(url_base + href)
         except Exception as e:
             print str(e)
-            continue
+        print 'done'
         page_source = driver.page_source
         dd = pq(page_source)
         body = dd('.page-content').outerHtml()
@@ -124,4 +162,4 @@ for i in range(1, 2):
         print 'post content to discuz...'
         posttime = datetime.datetime.now(tz)
         posttime = posttime.strftime('%Y-%m-%d %H:%M')
-        discuz.post(title, body, 2, 269, '平谷资讯小编', posttime, 0, htmlon=1)
+        # discuz.post(title, body, 2, 269, '平谷资讯小编', posttime, 0, htmlon=1)
