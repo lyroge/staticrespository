@@ -21,6 +21,8 @@
 ]
 """
 
+import time
+import random
 import sys
 import re
 from urlparse import urljoin
@@ -147,6 +149,13 @@ def main():
             # 格式不正确，那么返回None
             if 'url' in video_url:
                 return
+
+            # r = requests.get(url=video_url, allow_redirects=False)
+            # if r.status_code == 302:
+            #     video_url = r.headers.get('location') or video_url
+
+            # sleep_seconds = random.randint(1, 5)
+            # time.sleep(sleep_seconds)
             return video_url
 
         # 获取电影剧集信息
