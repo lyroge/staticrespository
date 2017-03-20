@@ -1,0 +1,4 @@
+关闭mysqld服务
+mysqld_safe --skip-grant-tables
+update mysql.user set authentication_string=password('abc') where user='root';
+flush privileges;
