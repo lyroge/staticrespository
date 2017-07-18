@@ -12,3 +12,22 @@ kill -USR1 $(cat /usr/local/nginx/nginx.pid)
 ## 定时任务
 0 0 * * * /bin/bash /usr/local/nginx/sbin/cut-log.sh
 
+# 用系统自带logrotate日志
+/var/log/nginx/access_php.log {
+    nocompress
+    daily
+    copytruncate
+    create
+    notifempty
+    noolddir
+    rotate 7
+    missingok
+    #size size
+    dateext
+    postrotate
+        /usr/bin/kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`
+    endscript
+}
+
+# 每天跑
+59 23 * * * /usr/sbin/logrotate /etc/logrotate.conf
