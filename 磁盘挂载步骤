@@ -4,3 +4,23 @@ mkdir /mnt/sdb 创建挂载目录
 mount /dev/xvdb /mnt/sdb 将磁盘挂载到目录
 
 umount /dev/hda5. 取消磁盘挂载
+
+
+
+交换分区
+df -h 查看磁盘
+swapon -s 查看交换分区
+
+fallocate -l 5G /swapfile 创建交换分区文件
+chmod 600 /swapfile 只有root可以访问
+mkswap /swapfile 转换成交换文件
+swapon /swapfile 开启交换分区
+swapoff /swapfile 关闭交换分区
+
+/etc/fstab 添加到文件自动挂载
+/swapfile  swap  swap  defaults  0 0
+
+dd 命令是另一个实用程序，可以帮助我们立即创建预分配大小的文件。
+sudo dd if=/dev/zero of=/swapfile1 bs=1G count=1
+
+参考：https://linux.cn/article-8699-1.html
