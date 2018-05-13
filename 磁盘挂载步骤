@@ -1,0 +1,6 @@
+fdisk -l 查看未挂载磁盘
+mkfs -t ext3 /dev/vdb 格式化磁盘
+mkdir /mnt/sdb 创建挂载目录
+mount /dev/xvdb /mnt/sdb 将磁盘挂载到目录
+
+umount /dev/hda5. 取消磁盘挂载
