@@ -1,0 +1,123 @@
+nginx 使用说明：
+
+运行模式：
+	1个master进程，多个worker进程
+	master进程主要负责读取配置文件，维护worker进程
+
+默认配置文件位置：
+	/etc/nginx
+	/usr/local/nginx/conf
+	/usr/local/etc/nginx
+
+nginx -s signal
+	stop — fast shutdown		直接停止
+	quit — graceful shutdown  	会等待服务完请求再停止
+	reload — reloading the configuration file 	重新加载配置文件，并生效
+		1. 检查配置文件语法
+		2. success启动新worker，向old worker发送关闭请求。
+		3. fail提示错误，恢复原有运行配置
+	reopen — reopening the log files
+
+	也可以通过kill发送信号
+	kill -s QUIT pid
+
+命令行主要的几个：
+	-p prefix /usr/local/nginx  指定安装路径
+	-q 禁止输出非错误信息
+
+
+==================================配置文件结构==================================
+
+结构块有这几种
+	context: 
+		events, http, server, and location
+
+	main context: 没在任何模块中
+		events 
+		http 
+			server
+				location： 多个匹配，选择最长的路径匹配
+
+				location / {
+				    root /data/www;
+				}
+
+				location /images/ {
+				    root /data;
+				}
+
+==================================构建简单的代理服务器==================================
+
+代理服务演示：
+	server {
+	    location / {
+	        proxy_pass http://localhost:8080;
+	    }
+
+	    注：~ 代表正则表达式
+
+	    location ~ \.(gif|jpg|png)$ {
+		    root /data/images;
+		}
+	}
+
+location匹配规则：
+	1. 首先检查具体前缀的请求， 记住最长的路径
+	2. 检查正则表达式
+	3. 如果匹配正则，用之
+	4. 否则用记住的最长路径
+
+==================================配置文件中的单位==================================	
+
+ms	milliseconds
+s	seconds
+m	minutes
+h	hours
+d	days
+w	weeks
+M	months, 30 days
+y	years, 365 days
+
+==================================nginx工作流程==================================	
+
+1. 首先根据请求头中的host确定域名
+2. 根据域名在server中查找匹配的服务器
+3. 如果都没有就转到默认的服务器
+	server {
+	    listen      80 default_server;
+	    server_name example.net www.example.net;
+	}
+4. 组织没有定义的servername服务器，匹配没有Host header头的
+	server {
+	    listen      80;
+	    server_name "";
+	    return      444;
+	}
+
+==================================负载均衡服务器==================================	
+
+三种负载模式：
+	1. round-robin - default
+	2. least-connected
+	3. ip-hash
+
+配置实例：
+	http {
+	    upstream myapp1 {
+		    ip_hash; 指定模式
+	        server srv1.example.com;
+	        server srv2.example.com;
+	        server srv3.example.com;
+	    }
+
+		server {
+		    listen 80;
+
+		    location / {
+		        proxy_pass http://myapp1;
+		    }
+		}
+	}
+
+
+
